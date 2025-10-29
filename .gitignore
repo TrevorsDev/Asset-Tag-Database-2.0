@@ -1,0 +1,15 @@
+# Environment variables
+.env
+
+# OS-specific/System files
+.DS_Store
+Thumbs.db
+
+# Node.js 
+node_modules/
+
+# Logs
+.logs
+
+# Supabase CLI (If we ever decide to use it locally. Not for now)
+.supabase/
