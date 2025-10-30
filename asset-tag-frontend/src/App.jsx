@@ -1,34 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+/* App.jsx
+This is my main React component. It:
+
+- Imports the Supabase connection from supabaseClient.js
+- Uses React tools (useState, useEffect) to:
+  - Fetch data from Supabase
+  - Store it in a variable (assets)
+  - Display it on the screen */
+
+import { useEffect, useState } from 'react';
+import { supabase } from './supabaseClient';
+
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [assets, setAssets] = useState([]);
+
+  // Runs once when the component loads
+  useEffect(() => {
+    fetchAssets();
+  }, []);
+
+  // Fetches data from Supabase
+  async function fetchAssets() {
+    const { data, error } = await supabase.from('assets').select('*');
+    if (error) console.error(error);
+    else setAssets(data);
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div>
+      <h1>Asset Tracker</h1>
+      <ul>
+        {assets.map((asset) => ( 
+          <li key={asset.id}>
+            {asset.asset_tag} - {asset.model} ({asset.status})
+          </li>
+        ))}
+      </ul>
+    </div>
+
+
+
+
   )
 }
 
