@@ -10,6 +10,7 @@
 
 
 import React, { useState } from 'react';
+import { validateAssetForm } from '../utils/validation';
 
 function AssetForm({ onSubmit }) {
   const [formData, setFormData] = useState({
@@ -22,7 +23,7 @@ function AssetForm({ onSubmit }) {
     po: ''
   });
 
-  const [error, setError] = useState();
+  const [errors, setErrors] = useState({});
 
   const updateField = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -63,28 +64,28 @@ function AssetForm({ onSubmit }) {
 return (
     <div>
       <h2>Add New Asset</h2>
-      {errors.form && <p style={{ color: 'red' }}>{errors.form}</p>}
+      {errors?.asset_tag && <p style={{ color: 'red' }}>{errors.asset_tag}</p>}
       <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
         <input type="text" placeholder="Asset Tag" value={formData.asset_tag} onChange={(e) => updateField('asset_tag', e.target.value)} />
-        {errors.asset_tag && <p style={{ color: 'red' }}>{errors.asset_tag}</p>}
+        {/* {errors?.asset_tag && <p style={{ color: 'red' }}>{errors.asset_tag}</p>} */}
 
+        {errors?.serial_number && <p style={{ color: 'red' }}>{errors.serial_number}</p>}
         <input type="text" placeholder="Serial Number" value={formData.serial_number} onChange={(e) => updateField('serial_number', e.target.value)} />
-        {errors.serial_number && <p style={{ color: 'red' }}>{errors.serial_number}</p>}
 
+        {errors?.model && <p style={{ color: 'red' }}>{errors.model}</p>}
         <input type="text" placeholder="Model" value={formData.model} onChange={(e) => updateField('model', e.target.value)} />
-        {errors.model && <p style={{ color: 'red' }}>{errors.model}</p>}
 
+        {errors?.status && <p style={{ color: 'red' }}>{errors.status}</p>}
         <input type="text" placeholder="Status" value={formData.status} onChange={(e) => updateField('status', e.target.value)} />
-        {errors.status && <p style={{ color: 'red' }}>{errors.status}</p>}
 
+        {errors?.department && <p style={{ color: 'red' }}>{errors.department}</p>}
         <input type="text" placeholder="Department" value={formData.department} onChange={(e) => updateField('department', e.target.value)} />
-        {errors.department && <p style={{ color: 'red' }}>{errors.department}</p>}
 
+        {errors?.pr && <p style={{ color: 'red' }}>{errors.pr}</p>}
         <input type="text" placeholder="Purchase Request" value={formData.pr} onChange={(e) => updateField('pr', e.target.value)} />
-        {errors.pr && <p style={{ color: 'red' }}>{errors.pr}</p>}
 
+        {errors?.po && <p style={{ color: 'red' }}>{errors.po}</p>}
         <input type="text" placeholder="Purchase Order" value={formData.po} onChange={(e) => updateField('po', e.target.value)} />
-        {errors.po && <p style={{ color: 'red' }}>{errors.po}</p>}
 
         <button type="submit">Add Asset</button>
       </form>
