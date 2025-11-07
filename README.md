@@ -1,19 +1,11 @@
 # Asset-Tag-Database-2.0
-Im restarting this project from fresh in order to solidify the process that Ive already undergone, and to update my SQL to better align with Microsoft SQL Server, instead of PostgreSQL
-
-Currently using Supabase to design and test my backend database. Im tracking my work in VS Code with a structure that aligns with the eventual implementation of Microsoft SQL Server.
-
-Below is a README from my past version of this project which is just as relevant to this current version.
-
-
-## About this Build
 
 This project is a rebuild of my original asset tracking system, designed to reinforce my understanding of full-stack development and improve SQL compatibility with Microsoft SQL Server. I'm currently using **Supabase** for backend development and **React (with Vite)** for the frontend.
 
-The goal is to create a professional, MVP-ready web application that allows users to:
+The goal is to create a professional, MVP-ready web application that is ready to be adapted or refactored into an enterprise's current tech stack. Most importantly it should allow users to:
 
 - View individual IT assets
-- Add assets manually via a frontend form
+- Add, remove, and update assets manually via a frontend form
 - Search and filter assets by column (e.g., model, department, status)
 - Generate and download reports
 - Import assets via CSV
@@ -22,10 +14,10 @@ The goal is to create a professional, MVP-ready web application that allows user
 ---
 
 ## 🧱 Project Structure
-
+```
 Asset_Tag_Database_2.0/ 
 ├── backend/ 
-│ └── sql/ 
+└── sql/ 
 │ ├── 01_schema.sql         # Table structure: assets
 │ ├── 02_policies.sql       # Row-level security & access
 │ ├── 03_seed.sql           # Example data for seeding
@@ -47,6 +39,7 @@ Asset_Tag_Database_2.0/
 │ ├── package.json 
 │ └── vite.config.js
 
+```
 ---
 
 ## ✅ Current Progress
@@ -76,14 +69,14 @@ Asset_Tag_Database_2.0/
    cd asset-tag-frontend
 
 3. Install dependencies:
-  1 npm install
+   npm install
 
 4. Start the development server:
-  1 npm run dev
+   npm run dev
 
 5. Open your browser to http://localhost:5173
 
-
+```
 Next Steps
 ✅ Connect frontend to Supabase
 ✅ Display asset data in a table
@@ -100,5 +93,5 @@ Supabase is used to simplify backend setup while maintaining SQL control.
 React is used to build a responsive, modern frontend with real-time data interaction.
 CSV headers must match the table columns exactly for import.
 The frontend is built using React with Vite for fast development and hot module reloading.
-
+```
 ---
