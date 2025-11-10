@@ -12,7 +12,11 @@ This is a custom React hook that manages asset data from Supabase.
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 
-export 
+export async function fetchAssets() {
+  const { data, error } = await supabase.from('assets').select('*');
+  if (error) throw error;
+  return data;
+}
 
 function useAssets() {
   const [assets, setAssets] = useState([]);
