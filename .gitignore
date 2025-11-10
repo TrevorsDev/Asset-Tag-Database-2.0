@@ -1,5 +1,5 @@
 # Environment variables
-.env
+*.env
 
 # OS-specific/System files
 .DS_Store

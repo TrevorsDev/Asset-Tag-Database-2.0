@@ -12,6 +12,8 @@ This is a custom React hook that manages asset data from Supabase.
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 
+export 
+
 function useAssets() {
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);

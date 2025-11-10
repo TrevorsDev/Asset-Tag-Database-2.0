@@ -9,27 +9,56 @@ This component displays a table of asset data.
 */
 
 import React from 'react';
+import ColumnFilter from './AssetSearch';
+import useAssets from '../hooks/useAssets';
 
-function AssetTable({ assets }) {
-  if (!assets || assets.length === 0) {
-    return <p>No assets found.</p>;
-  }
+const AssetTable = () => {
+  const [assets, setAssets] = useState([[]]);
+  const [filters, setFilters] = useState({ status: '' });
+
+  useEffect(() => {
+    const loadAssets = async () => {
+      const data = await useAssets();
+      setAssets(data);
+    };
+    loadAssets();
+  }, []);
+  const handleFilterChange = (column, value) => {
+    setFilters((prev) => ({ ...prev, [column]: value }));
+  };
+
+  const filteredAssets = assets.filter((asset) => {
+    return (
+      (!filters.status || asset.status === filters.status)
+    );
+  });
+
+  const statusOptions = [...new Set(assets.map((a) => a.status).filter(Boolean))];
 
   return (
-    <table border="1" cellPadding="8" style={{ borderCollapse: 'collapse', marginTop: '20px' }}>
+    <table>
       <thead>
         <tr>
           <th>Asset Tag</th>
           <th>Serial Number</th>
           <th>Model</th>
-          <th>Status</th>
+          <th>
+            Status
+            <ColumnFilter
+              column="status"
+              type="dropdown"
+              options={statusOptions}
+              value={filters.status}
+              onChange={handleFilterChange}
+            />
+          </th>
           <th>Department</th>
           <th>Purchase Request</th>
           <th>Purchase Order</th>
         </tr>
       </thead>
       <tbody>
-        {assets.map((asset) => (
+        {filteredAssets.map((asset) => (
           <tr key={asset.id}>
             <td>{asset.asset_tag}</td>
             <td>{asset.serial_number}</td>
