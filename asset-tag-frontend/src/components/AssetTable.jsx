@@ -8,21 +8,14 @@ This component displays a table of asset data.
 - Handle the “no assets” and “loading” states 
 */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ColumnFilter from './AssetSearch';
 import useAssets from '../hooks/useAssets';
 
 const AssetTable = () => {
-  const [assets, setAssets] = useState([[]]);
+  const { assets, loading, error } = useAssets(); //Brought this hook to the top level of function, which is the proper way to use hooks in React.
   const [filters, setFilters] = useState({ status: '' });
 
-  useEffect(() => {
-    const loadAssets = async () => {
-      const data = await useAssets();
-      setAssets(data);
-    };
-    loadAssets();
-  }, []);
   const handleFilterChange = (column, value) => {
     setFilters((prev) => ({ ...prev, [column]: value }));
   };
@@ -34,6 +27,7 @@ const AssetTable = () => {
   });
 
   const statusOptions = [...new Set(assets.map((a) => a.status).filter(Boolean))];
+// console.log('Filtered asset IDs:', filteredAssets.map(a => a.id));
 
   return (
     <table>
