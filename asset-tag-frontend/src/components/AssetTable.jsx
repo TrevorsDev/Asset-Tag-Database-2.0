@@ -9,43 +9,57 @@ This component displays a table of asset data.
 */
 
 import React, { useState, useEffect } from 'react';
+import FiltersBar from './FiltersBar';
 import ColumnFilter from './AssetSearch';
 import useAssets from '../hooks/useAssets';
 
 // Define the AssetTable component
 const AssetTable = () => {
   const { assets, loading, error } = useAssets(); //Brought this hook to the top level of function, which is the proper way to use hooks in React.
-  const [filters, setFilters] = useState({ status: '' });
+  const [filters, setFilters] = useState({ 
+    asset_tag: '',
+    serial_number: '',
+    model: '', 
+    status: '',
+    department: '',
+    pr: '',
+    po: '',
+    created_at: '' 
+  });  //Combined filter column options for all filterable columns.
 
   const handleFilterChange = (column, value) => {
     setFilters((prev) => ({ ...prev, [column]: value }));
     // This updates the filters object, e.g., { status: 'In Use' }
   };
 
-  // Filter the assets based on the selected status
+  // Get a list of unique options filterable dropdowns
+  const statusOptions = [...new Set(assets.map((a) => a.status).filter(Boolean))];
+  const departmentOptions = [...new Set(assets.map((a) => a.department).filter(Boolean))];
+
+// Filters the assets list based on selected filter values.
+// If a filter is empty, it doesn't restrict the results for that column.
   const filteredAssets = assets.filter((asset) => {
     return (
-      (!filters.status || asset.status === filters.status)
+      (!filters.status || asset.status === filters.status) &&
+      (!filters.department || asset.department === filters.department)
     );
     // If no filter is selected, show all assets
     // If a filter is selected, only show matching assets
   });
-
-  // Get a list of unique status values for the dropdown
-  const statusOptions = [...new Set(assets.map((a) => a.status).filter(Boolean))];
-// console.log('Filtered asset IDs:', filteredAssets.map(a => a.id));
 
   // Render the table
   return (
     <table>
       <thead>
         <tr>
-          <th>Asset Tag</th>
+          <th>Asset Tag
+            
+          </th>
           <th>Serial Number</th>
           <th>Model</th>
           <th>
             Status
-            // Render the dropdown filter for the status column
+            {/* Render the dropdown filter for the status column */}
             <ColumnFilter
               column="status"
               type="dropdown"
@@ -54,13 +68,22 @@ const AssetTable = () => {
               onChange={handleFilterChange}
             />
           </th>
-          <th>Department</th>
+          <th>
+            Department
+            <ColumnFilter
+              column="department"
+              type="dropdown"
+              options={departmentOptions}
+              value={filters.department}
+              onChange={handleFilterChange}
+            />
+          </th>
           <th>Purchase Request</th>
           <th>Purchase Order</th>
         </tr>
       </thead>
       <tbody>
-        // Loop through the filtered assets and render each row
+        {/* Loop through the filtered assets and render each row */}
         {filteredAssets.map((asset) => (
           <tr key={asset.id}>
             <td>{asset.asset_tag}</td>
