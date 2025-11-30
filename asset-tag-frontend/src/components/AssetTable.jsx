@@ -9,8 +9,7 @@ This component displays a table of asset data.
 */
 
 import React, { useState, useEffect } from 'react';
-import FiltersBar from './FiltersBar';
-import ColumnFilter from './AssetSearch';
+import FiltersBar from './FilterBar';
 import useAssets from '../hooks/useAssets';
 
 // Define the AssetTable component
@@ -23,8 +22,7 @@ const AssetTable = () => {
     status: '',
     department: '',
     pr: '',
-    po: '',
-    created_at: '' 
+    po: '' 
   });  //Combined filter column options for all filterable columns.
 
   const handleFilterChange = (column, value) => {
@@ -40,8 +38,13 @@ const AssetTable = () => {
 // If a filter is empty, it doesn't restrict the results for that column.
   const filteredAssets = assets.filter((asset) => {
     return (
+      (!filters.asset_tag || asset.asset_tag.toLowerCase().includes(filters.asset_tag.toLowerCase())) &&
+      (!filters.serial_number || asset.serial_number.toLowerCase().includes(filters.serial_number.toLowerCase())) &&
+      (!filters.model || asset.model.toLowerCase().includes(filters.model.toLowerCase())) &&
       (!filters.status || asset.status === filters.status) &&
-      (!filters.department || asset.department === filters.department)
+      (!filters.department || asset.department === filters.department) &&
+      (!filters.pr || asset.pr.toLowerCase().includes(filters.pr.toLowerCase())) &&
+      (!filters.po || asset.po.toLowerCase().includes(filters.po.toLowerCase()))
     );
     // If no filter is selected, show all assets
     // If a filter is selected, only show matching assets
@@ -49,35 +52,22 @@ const AssetTable = () => {
 
   // Render the table
   return (
+    <>
+    <FiltersBar
+      filters={filters}
+      onFilterChange={handleFilterChange}
+      statusOptions={statusOptions}
+      departmentOptions={departmentOptions}
+    />
+
     <table>
       <thead>
         <tr>
-          <th>Asset Tag
-            
-          </th>
+          <th>Asset Tag</th>
           <th>Serial Number</th>
           <th>Model</th>
-          <th>
-            Status
-            {/* Render the dropdown filter for the status column */}
-            <ColumnFilter
-              column="status"
-              type="dropdown"
-              options={statusOptions}
-              value={filters.status}
-              onChange={handleFilterChange}
-            />
-          </th>
-          <th>
-            Department
-            <ColumnFilter
-              column="department"
-              type="dropdown"
-              options={departmentOptions}
-              value={filters.department}
-              onChange={handleFilterChange}
-            />
-          </th>
+          <th>Status</th>
+          <th>Department</th>
           <th>Purchase Request</th>
           <th>Purchase Order</th>
         </tr>
@@ -97,6 +87,7 @@ const AssetTable = () => {
         ))}
       </tbody>
     </table>
+    </>
   );
 }
 // Export the component so it can be used in other files

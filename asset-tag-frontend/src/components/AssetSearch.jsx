@@ -5,28 +5,25 @@ Render either a dropdown or a text input based on the type */
 
 import React from 'react';
 
-const ColumnFilter = ({ column, type, options = [], value, onChange }) => {
-  // console.log('Status options:', options); //Confirming that 'options' in the dropdown are valid and unique
+const ColumnFilter = ({ type, value, onChange, options = [], placeholder }) => {
+  if (type === 'dropdown') {
+    return (
+      <select value={value} onChange={ (e) => onChange(e.target.value)}>
+        <option value="">All</option>
+        {options.map((opt) => (
+          <option key={opt} value={opt}>{opt}</option>
+        ))}
+      </select>
+    );
+  }
+
   return (
-    <div className="column-filter">
-      {type === 'dropdown' ? (
-        <select value={value} onChange={(e) => onChange(column, e.target.value)}>
-          <option value="">All</option>
-          {options.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
-            </option>
-          ))}
-        </select>
-      ) : (
-        <input
-          type="text"
-          placeholder={`Search ${column}`}
-          value={value}
-          onChange={(e) => onChange(column, e.target.value)}
-        />
-      )}
-    </div>
+    <input
+      type="text"
+      value={value}
+      onChange={ (e) => onChange(e.target.value) }
+      placehoder={placeholder}
+    />
   );
 };
 
