@@ -15,6 +15,7 @@ import useAssets from '../hooks/useAssets';
 // Define the AssetTable component
 const AssetTable = () => {
   const { assets, loading, error } = useAssets(); //Brought this hook to the top level of function, which is the proper way to use hooks in React.
+  
   const [filters, setFilters] = useState({ 
     asset_tag: '',
     serial_number: '',

@@ -82,7 +82,10 @@ Next Steps
 ✅ Display asset data in a table
 ✅ Complete form to add new assets
 ✅ Add form validation and error handling
-🔲 Implement column-based filtering (starting with status)
+✅ Implement column-based filtering (starting with status)
+   🔲 - Styling the filters bar to match your table layout? (Next iteration)
+   🔲 - Adding a loading spinner or "No results found" message? (Next iteration)
+   🔲 - Creating a “Clear All Filters” button? (Next iteration)
 🔲 Add CSV import support
 🔲 Add edit/update and delete functionality
 🔲 Add authentication and secure access

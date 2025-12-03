@@ -2,6 +2,7 @@
 
 /* Accept props like column, type, options, onFilterChange
 Render either a dropdown or a text input based on the type */
+// ColumnFilter is a reusable input component.
 
 import React from 'react';
 
