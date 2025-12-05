@@ -1,53 +1,36 @@
 // FiltersBar handles UI for filters.
-/* This code is a React functional component written in JavaScript (likely using JSX syntax). It represents a FiltersBar component that renders a series of individual ColumnFilter components to create an interactive filtering interface. */
+/* This code is a React functional component written in JavaScript. It represents a FiltersBar component that renders a series of individual ColumnFilter components to create an interactive filtering interface. */
+// import React from 'react';
+// import ColumnFilter from './AssetSearch';
+
+// Below uses a Configuration Array
+
 import React from 'react';
 import ColumnFilter from './AssetSearch';
 
 const FiltersBar = ({ filters, onFilterChange, statusOptions, departmentOptions }) => {
+  const filterConfig = [
+    { key: 'status', type: 'dropdown', options: departmentOptions },
+    { key: 'department', type: 'dropdown', options: departmentOptions },
+    { key: 'asset_tag', type: 'text', placeholder: 'Asset Tag' },
+    { key: 'serial_number', type: 'text', placeholder: 'Serial Number' },
+    { key: 'model', type: 'text', placeholder: 'Model' },
+    { key: 'pr', type: 'text', placeholder: 'PR' },
+    { key: 'po', type: 'text', placeholder: 'po' }
+  ];
+
   return (
-    <div className="filters-bar">
+    <div className = "filters-bar">
+      {filterConfig.map(({ key, type, options, placeholder }) => (
         <ColumnFilter
-          type="text"
-          value={filters.asset_tag}
-          onChange={(val) => onFilterChange('asset_tag', val)}
-          placeholder="Asset Tag"
+          key={key}
+          type={type}
+          value={filters[key]}
+          onChange={(val) => onFilterChange(key, val)}
+          options={options}
+          placeholder={placeholder}
         />
-        <ColumnFilter
-          type="text"
-          value={filters.serial_number}
-          onChange={(val) => onFilterChange('serial_number', val)}
-          placeholder="Serial Number"
-        />
-        <ColumnFilter
-          type="text"
-          value={filters.model}
-          onChange={(val) => onFilterChange('model', val)}
-          placeholder="Model"
-        />
-      <ColumnFilter
-        type="dropdown"
-        value={filters.status}
-        onChange={(val) => onFilterChange('status', val)}
-        options={statusOptions}
-      />
-      <ColumnFilter
-        type="dropdown"
-        value={filters.department}
-        onChange={(val) => onFilterChange('department', val)}
-        options={departmentOptions}
-      />
-      <ColumnFilter
-        type="text"
-        value={filters.pr}
-        onChange={(val) => onFilterChange('pr', val)}
-        placeholder="Purchase Request"
-      />
-      <ColumnFilter
-        type="text"
-        value={filters.po}
-        onChange={(val) => onFilterChange('po', val)}
-        placeholder="Purchase Order"
-      />
+      ))}
     </div>
   );
 };
