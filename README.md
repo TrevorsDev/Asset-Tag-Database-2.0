@@ -59,6 +59,21 @@ Asset_Tag_Database_2.0/
 - App renders successfully in browser
 - Preparing to implement column-based filtering
 
+### ✅ FiltersBar Component
+- Introduced a centralized `FiltersBar` component to manage all column filters.
+- Uses a reusable `ColumnFilter` component for both dropdown and text input filters.
+- Filters are driven by a config array for scalability and maintainability.
+
+### ✅ ColumnFilter Abstraction
+- Created a reusable `ColumnFilter` component that supports both dropdown and text input types.
+- Simplifies the UI and keeps the code DRY (Don't Repeat Yourself).
+
+### ✅ CSVUploader Component
+- Added a new `CSVUploader` component to support uploading `.csv` files.
+- Built a custom CSV parser using the FileReader API (no third-party libraries).
+- Parses thousands of rows and maps them to asset objects.
+- Validates headers and displays the number of parsed rows.
+
 ---
 
 ## 🚀 How to Run the App

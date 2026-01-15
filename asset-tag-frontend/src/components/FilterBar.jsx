@@ -10,11 +10,11 @@ import ColumnFilter from './AssetSearch';
 
 const FiltersBar = ({ filters, onFilterChange, statusOptions, departmentOptions }) => {
   const filterConfig = [
-    { key: 'status', type: 'dropdown', options: departmentOptions },
-    { key: 'department', type: 'dropdown', options: departmentOptions },
     { key: 'asset_tag', type: 'text', placeholder: 'Asset Tag' },
     { key: 'serial_number', type: 'text', placeholder: 'Serial Number' },
     { key: 'model', type: 'text', placeholder: 'Model' },
+    { key: 'status', type: 'dropdown', options: departmentOptions },
+    { key: 'department', type: 'dropdown', options: departmentOptions },
     { key: 'pr', type: 'text', placeholder: 'PR' },
     { key: 'po', type: 'text', placeholder: 'po' }
   ];
