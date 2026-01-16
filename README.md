@@ -1,6 +1,6 @@
 # Asset-Tag-Database-2.0
 
-This project is a rebuild of my original asset tracking system, designed to reinforce my understanding of full-stack development and improve SQL compatibility with Microsoft SQL Server. I'm currently using **Supabase** for backend development and **React (with Vite)** for the frontend.
+This project is a rebuild of my original asset tracking system, designed to reinforce my understanding of full-stack development and improve SQL compatibility with Microsoft SQL Server. I'm currently using **Supabase** (PostgreSQL) for backend development and **React (with Vite)** for the frontend.
 
 The goal is to create a professional, MVP-ready web application that is ready to be adapted or refactored into an enterprise's current tech stack. Most importantly it should allow users to:
 
@@ -8,7 +8,7 @@ The goal is to create a professional, MVP-ready web application that is ready to
 - Add, remove, and update assets manually via a frontend form
 - Search and filter assets by column (e.g., model, department, status)
 - Generate and download reports
-- Import assets via CSV
+- Import assets via CSV (with Upsert logic)
 - Authenticate users and restrict access
 
 ---
@@ -29,7 +29,8 @@ Asset_Tag_Database_2.0/
 │ │ ├── App.jsx             # Main React component
 │ │ ├── components/ 
 │ │ │ ├── AssetForm.jsx 
-│ │ │ ├── AssetTable.jsx 
+│ │ │ ├── AssetTable.jsx
+│ │ │ ├── CSVUploader/ # CSV Import component & styles  
 │ │ │ └── (filter components coming soon) 
 │ │ ├── hooks/ 
 │ │ │ └── useAssets.js │ │ ├── utils/ 
@@ -45,11 +46,12 @@ Asset_Tag_Database_2.0/
 ## ✅ Current Progress
 
 ### 🔧 Backend (Supabase)
-- `assets` table created with full schema
+- `assets` table created with full schema (UUIDs and Unique constraints).
 - Row-level security enabled
 - Public read access temporarily allowed
 - Seed data inserted for testing
 - Utility scripts for row counts and resets
+- **Upsert Logic:** Backend prepared to handle "Update or Insert" operations based on unique asset tags.
 
 ### 💻 Frontend (React + Vite)
 - Supabase client configured
@@ -57,7 +59,11 @@ Asset_Tag_Database_2.0/
 - Form built to add new assets
 - Validation and error handling implemented
 - App renders successfully in browser
-- Preparing to implement column-based filtering
+- **Data Management:** Custom `useAssets` hook manages fetching and bulk data operations.
+- **FiltersBar:** Centralized filtering system using reusable `ColumnFilter` components for scalability.
+- **CSV Import:** - Custom parser built using the browser's **File API**.
+  - **Mapping Layer:** Automatically translates inconsistent CSV headers (like 'sn' or 'dept') into database-compliant fields.
+  - **Review State:** Implemented a two-stage "Upload -> Confirm" workflow to prevent accidental database writes.
 
 ### ✅ FiltersBar Component
 - Introduced a centralized `FiltersBar` component to manage all column filters.
@@ -98,10 +104,10 @@ Next Steps
 ✅ Complete form to add new assets
 ✅ Add form validation and error handling
 ✅ Implement column-based filtering (starting with status)
-   🔲 - Styling the filters bar to match your table layout? (Next iteration)
+   🔲 - Styling the filters bar to match my table layout? (Next iteration)
    🔲 - Adding a loading spinner or "No results found" message? (Next iteration)
    🔲 - Creating a “Clear All Filters” button? (Next iteration)
-🔲 Add CSV import support
+✅ Add CSV import support (with Upsert mapping)
 🔲 Add edit/update and delete functionality
 🔲 Add authentication and secure access
 🔲 Deploy MVP and test full workflow
@@ -113,3 +119,8 @@ CSV headers must match the table columns exactly for import.
 The frontend is built using React with Vite for fast development and hot module reloading.
 ```
 ---
+
+## 📝 Notes
+- Developed as a learning tool for full-stack integration and database design.
+
+- The Mapping Layer in useAssets.js allows for flexible CSV header naming, increasing user-friendliness for non-technical staff.
