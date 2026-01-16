@@ -15,58 +15,42 @@ It does it by:
 - Logging or returning the parsed data for now 
 */
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import './CSVUploader.css'; // Import the new stylesheet
 
 /**
- * Parses a CSV string into a JavaScript array of objects.
- * Handles thousands of rows and validates the structure based on the first line (headers).
- * @param {string} csvString The raw text content of the CSV file.
- * @returns {Array<Object>} An array of objects where keys are headers.
+ * HELPER FUNCTION: This must be defined for the component to use it.
  */
 const parseCSV = (csvString) => {
-  // Use regex to split the string by lines, correctly handling line endings (CRLF or LF)
   const lines = csvString.trim().split(/\r\n|\n/);
+  if (lines.length === 0) throw new Error("CSV file is empty.");
 
-  if (lines.length === 0) {
-    throw new Error("CSV file is empty.");
-  }
-
-  // Extract and clean headers (around 20-25 expected)
   const headers = lines[0].split(',').map(header => header.trim());
-
   const result = [];
 
-  // Iterate over the rest of the lines (starting from index 1)
   for (let i = 1; i < lines.length; i++) {
     const values = lines[i].split(',').map(value => value.trim());
-
-    // Basic structure validation: ensure the number of values matches the number of headers
-    if (values.length !== headers.length) {
-      console.warn(`Skipping row ${i + 1} due to structure mismatch: expected ${headers.length} columns, found ${values.length}`);
-      continue;
-    }
+    if (values.length !== headers.length) continue;
 
     const obj = {};
     for (let j = 0; j < headers.length; j++) {
-      // Create the object: header as key, value as value
       obj[headers[j]] = values[j];
     }
     result.push(obj);
   }
-
   return result;
 };
 
-
 const CSVUploader = ({ onDataParsed }) => {
+  const [tempData, setTempData] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef(null);
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
-    // Validation: Check file type
     if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
       setError("Please upload a valid .csv file.");
       return;
@@ -75,20 +59,14 @@ const CSVUploader = ({ onDataParsed }) => {
     setLoading(true);
     setError(null);
 
-    // FileReader is a browser API used to read file contents
+    // This line creates a new instance of the browser's "FileReader" tool
     const reader = new FileReader();
-
     reader.onload = (e) => {
       try {
         const csvContent = e.target.result;
-        // Pass the raw string content to our dedicated parsing logic
         const parsedData = parseCSV(csvContent); 
-        
         console.log(`Successfully parsed ${parsedData.length} rows.`);
-        
-        // Return the clean JS array of objects to the parent component
-        onDataParsed(parsedData); 
-
+        setTempData(parsedData); 
       } catch (err) {
         setError(`Error parsing file: ${err.message}`);
       } finally {
@@ -101,27 +79,51 @@ const CSVUploader = ({ onDataParsed }) => {
       setLoading(false);
     };
 
-    // Read the file content as text
+    // This line tells that browser tool to start reading the file
     reader.readAsText(file);
   };
 
+  const handleUpload = async () => {
+    setLoading(true);
+    try {
+      await onDataParsed(tempData);
+      setTempData([]); 
+      if (fileInputRef.current) fileInputRef.current.value = ""; 
+    } catch (err) {
+      setError("Upload failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="csv-uploader">
+    <div className="csv-uploader-container">
       <input
         type="file"
         accept=".csv"
         onChange={handleFileChange}
-        disabled={loading}
+        ref={fileInputRef}
+        className="hidden-file-input"
         id="csv-upload-input"
       />
-      <label htmlFor="csv-upload-input">
-        {loading ? 'Parsing...' : 'Choose a .csv file to upload'}
+      
+      <label htmlFor="csv-upload-input" className="upload-label">
+        {loading ? 'Processing...' : 'Choose a .csv file to upload'}
       </label>
       
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {tempData.length > 0 && (
+        <div className="upload-preview-box">
+          <p><strong>{tempData.length}</strong> rows ready to upload.</p>
+          <button className="confirm-btn" onClick={handleUpload} disabled={loading}>
+            {loading ? 'Uploading...' : 'Confirm & Upload to Database'}
+          </button>
+          <button className="cancel-btn" onClick={() => setTempData([])} disabled={loading}>
+            Cancel
+          </button>
+        </div>
+      )}
       
-      {/* Add a placeholder for eventual backend submission logic */}
-      {/* <button onClick={handleSendDataToBackend}>Send to SQL Server</button> */}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 };

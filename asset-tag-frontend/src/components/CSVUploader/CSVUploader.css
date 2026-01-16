@@ -1,0 +1,44 @@
+.csv-uploader-container {
+  padding: 20px;
+  /* border: 1px dashed #ccc; */
+  border-radius: 8px;
+  margin: 20px 0;
+  /* background-color: #fafafa; */
+  text-align: center;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+.upload-label {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.upload-label:hover {
+  background-color: #0056b3;
+}
+
+.upload-preview-box {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #e3f2fd;
+  border-radius: 4px;
+}
+
+.confirm-btn {
+  background-color: #28a745;
+  color: white;
+  margin-right: 10px;
+}
+
+.cancel-btn {
+  background-color: #dc3545;
+  color: white;
+}
