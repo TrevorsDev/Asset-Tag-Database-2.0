@@ -112,15 +112,13 @@ Next Steps
 🔲 Add authentication and secure access
 🔲 Deploy MVP and test full workflow
 📝 Notes
-This project is being developed as a learning tool to understand full-stack development, database design, and frontend/backend integration.
-Supabase is used to simplify backend setup while maintaining SQL control.
-React is used to build a responsive, modern frontend with real-time data interaction.
-CSV headers must match the table columns exactly for import.
-The frontend is built using React with Vite for fast development and hot module reloading.
+- This project is being developed as a learning tool to understand full-stack development, database design, and frontend/backend integration.
+- Supabase is used to simplify backend setup while maintaining SQL control.
+-React is used to build a responsive, modern frontend with real-time data interaction.
+-Except for the serial number ("sn" or "serial_number") and department ("dept" or "department") headers, the CSV headers must match the table columns exactly for import. 
+- The Mapping Layer in useAssets.js allows for flexible CSV header naming, increasing user-friendliness for non-technical staff.
+-The frontend is built using React with Vite for fast development and hot module reloading.
 ```
 ---
 
-## 📝 Notes
-- Developed as a learning tool for full-stack integration and database design.
 
-- The Mapping Layer in useAssets.js allows for flexible CSV header naming, increasing user-friendliness for non-technical staff.

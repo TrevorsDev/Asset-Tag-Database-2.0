@@ -12,7 +12,7 @@ This is a custom React hook that manages asset data from Supabase.
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 
-// 1. KEEP THIS: The standalone "Named Export" for other files to use
+// Standalone function for non-hook usage
 export async function fetchAssets() {
   const { data, error } = await supabase
     .from('assets')
@@ -77,14 +77,29 @@ function useAssets() {
       setLoading(false);
     };
 
+    // Delete Functionality 
+    const deleteAsset = async (id) => {
+      if (!id) return;
+
+      setLoading(true);
+      const { error } = await supabase
+        .from('assets')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting asset:', error);
+        setError(error.message);
+      } else {
+        await loadData(); // Refresh the list after deletion
+      }
+      setLoading(false);
+    };
+
+    // Only one useEffect is needed to trigger the initial load
     useEffect(() => {
       loadData();
     }, []);
-
-  // Fetch assets on first load
-  useEffect(() => {
-    fetchAssets();
-  }, []);
 
   return {
     assets,
@@ -92,6 +107,7 @@ function useAssets() {
     error,
     addAsset,
     bulkUpsertAssets,
+    deleteAsset,
     refreshAssets: loadData
   };
 }

@@ -8,13 +8,15 @@ This component displays a table of asset data.
 - Handle the “no assets” and “loading” states 
 */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { Trash2 } from 'lucide-react'; // Imports Trash icon
 import FiltersBar from './FilterBar';
 import useAssets from '../hooks/useAssets';
+import './assetTable.css'
 
 // Define the AssetTable component
 const AssetTable = () => {
-  const { assets, loading, error } = useAssets(); //Brought this hook to the top level of function, which is the proper way to use hooks in React.
+  const { assets, loading, error, deleteAsset } = useAssets(); //Brought this hook to the top level of function, which is the proper way to use hooks in React.
   
   const [filters, setFilters] = useState({ 
     asset_tag: '',
@@ -29,6 +31,13 @@ const AssetTable = () => {
   const handleFilterChange = (column, value) => {
     setFilters((prev) => ({ ...prev, [column]: value }));
     // This updates the filters object, e.g., { status: 'In Use' }
+  };
+
+  const handleDeleteClick = (id, assetTag) => {
+    const confirmed = window.confirm(`Permanently delete asset ${assetTag}?`);
+    if (confirmed) {
+      deleteAsset(id);
+    }
   };
 
   // Get a list of unique options filterable dropdowns
@@ -51,6 +60,10 @@ const AssetTable = () => {
     // If a filter is selected, only show matching assets
   });
 
+  // Simple Error/Loading UI
+  if (loading && assets.length === 0) return <p>Loading assets...</p>;
+  if (error) return <p style={{ color: 'red' }}>Error: {error}</p>;
+
   // Render the table
   return (
     <>
@@ -61,7 +74,7 @@ const AssetTable = () => {
       departmentOptions={departmentOptions}
     />
 
-    <table>
+    <table className="asset-table">
       <thead>
         <tr>
           <th>Asset Tag</th>
@@ -71,6 +84,7 @@ const AssetTable = () => {
           <th>Department</th>
           <th>Purchase Request</th>
           <th>Purchase Order</th>
+          <th>Actions</th> { /* Header for delete funcitonality */ }
         </tr>
       </thead>
       <tbody>
@@ -84,6 +98,17 @@ const AssetTable = () => {
             <td>{asset.department}</td>
             <td>{asset.pr}</td>
             <td>{asset.po}</td>
+            <td>
+              {/* The Delete Button itself */}
+              <button 
+                className="delete-button"
+                onClick={() => handleDeleteClick(asset.id, asset.asset_tag)} 
+                aria-label={`Delete asset ${asset.asset_tag}`}
+                title="Delete Asset" 
+              >
+                <Trash2 /> {/* The Icon Component */}
+              </button>
+            </td>
           </tr>
         ))}
       </tbody>

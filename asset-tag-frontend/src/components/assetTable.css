@@ -1,0 +1,35 @@
+.delete-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #dc3545;
+    cursor: pointer; 
+    background: none;
+    border: none;
+    padding: 0em;
+    width: 2em;
+    height: 2em;
+}
+
+.lucide {
+    width: 1em;
+    height: 1em;
+}
+
+.delete-button:hover,
+.delete-button:active {
+    color: red;
+    transition: .25s;
+}
+
+/* Remove outline only when clicked with a mouse */
+.delete-button:focus:not(:focus-visible) {
+    outline: none; 
+}
+
+/* Apply custom outline only for keyboard focus. Removing the focus outline can hurt accessibility for keyboard users. This is the proper way to customize your UX */
+/* This works for modern borwsers only. Doesnt matter for Pima County's needs */
+.delete-button:focus-visible {
+    outline: 1px solid #dc3545;
+    outline-offset: 2px;
+}
