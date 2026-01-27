@@ -14,7 +14,7 @@
 .upload-label {
   display: inline-block;
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: #000000;
   color: white;
   border-radius: 4px;
   cursor: pointer;
@@ -22,7 +22,7 @@
 }
 
 .upload-label:hover {
-  background-color: #0056b3;
+  background-color: #00162d;
 }
 
 .upload-preview-box {

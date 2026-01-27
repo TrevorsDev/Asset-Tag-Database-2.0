@@ -1,10 +1,27 @@
-.delete-button {
+/* While this project is to be viewed solely by Pima County, and using their desktop configuration, my intention is always to use professional practices in my code. That includes using responsive units that will adjust to various screen sizes. */
+
+.table-wrapper {
+    border: yellow solid 1px;
+}
+
+.table-controls {
+    display: flex;
+    gap: 1em;
+    margin-bottom: 4em;
+    border: blueviolet solid 2px;
+
+}
+
+/* Row Hover Logic: Hide trash by default, show on hover */
+.trash-button {
+    opacity: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: opacity 0.1s ease;
     color: #dc3545;
+    background: transparent;
     cursor: pointer; 
-    background: none;
     border: none;
     padding: 0em;
     width: 2em;
@@ -16,20 +33,77 @@
     height: 1em;
 }
 
-.delete-button:hover,
-.delete-button:active {
+.trash-button:hover,
+.trash-button:active {
     color: red;
     transition: .25s;
 }
 
 /* Remove outline only when clicked with a mouse */
-.delete-button:focus:not(:focus-visible) {
+.trash-button:focus:not(:focus-visible) {
     outline: none; 
 }
 
 /* Apply custom outline only for keyboard focus. Removing the focus outline can hurt accessibility for keyboard users. This is the proper way to customize your UX */
 /* This works for modern borwsers only. Doesnt matter for Pima County's needs */
-.delete-button:focus-visible {
+.trash-button:focus-visible {
     outline: 1px solid #dc3545;
     outline-offset: 2px;
 }
+
+.asset-row:hover .trash-button {
+    opacity: 1; 
+}
+
+/* Highlight the whole row on hover for better UX */
+.asset-row:hover {
+    background-color: #f8f9fa13;
+}
+
+.selected-row {
+    background-color: #dc354631;
+}
+
+.checkbox-col {
+    width: 2.5em;
+    text-align: center;
+    /* border: 2px blue solid; */
+}
+
+
+
+
+
+
+/* Manage Button Styling */
+.manage-btn {
+    padding: 6px 12px;
+    border: 1px solid #007bff;
+    background: white;
+    color: #007bff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.bulk-delete-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* QUESTIONS FOR AI: 
+Im noticing that you are using ".table-wrapper {
+
+    margin-top: 20px;
+
+} " pixels for your dimensions. I want to be using something responsive. As far as i know, that really is the most professional practice. so, what units might you recommend?  
+
+
+
+Also, Im in the bay area california. what are some of the BEST tech meetups for someone who is attempting to break into the software development, or IT industry?
+
+After I finish with this project, im a bit concerned on what new project i could work on that would be insightful to learn from, useful, AND impressive to employeers when they view my portfolio. A personal website is probably the best next project. but what other projects should I consider, both software engineering specific & hardware software combinations like a home camera system with its own in-house server are examples I think of.
+*/

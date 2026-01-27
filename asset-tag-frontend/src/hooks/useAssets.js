@@ -12,7 +12,10 @@ This is a custom React hook that manages asset data from Supabase.
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 
-// Standalone function for non-hook usage
+/* 
+- Standalone function for non-hook usage 
+- Exported so other files can fetch data without using the hook.
+*/
 export async function fetchAssets() {
   const { data, error } = await supabase
     .from('assets')
@@ -28,7 +31,7 @@ function useAssets() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 2. RE-USE the standalone function inside the hook
+  // --- 1. READ ---
   const loadData = async () => {
     setLoading(true);
     try {
@@ -43,16 +46,21 @@ function useAssets() {
     }
   };
 
-  // Insert a new asset
+  // --- 2. CREATE ---
   const addAsset = async (newAsset) => {
-    const { error } = await supabase.from('assets').insert([newAsset]);
+    const { error: insError } = await supabase
+      .from('assets')
+      .insert([newAsset]);
 
-    if (error) return false;
-    console.error('Error inserting asset:', error);
+    if (insError) {
+      console.error('Error inserting asset:', insError);
+      return false;
+    }
     await loadData();
     return true;
   };
 
+  // --- 3. BULK UPSERT (CSV File) --- 
   const bulkUpsertAssets = async (csvData) => {
     setLoading(true);
     const mappedData = csvData.map(row => ({
@@ -65,39 +73,51 @@ function useAssets() {
       department: row.dept || row.department,
     }));
   
-    const {error} =await supabase
+    const { error: upError } = await supabase
       .from('assets')
       .upsert(mappedData, { onConflict: 'asset_tag' });
 
-      if (error) {
-        setError(error.message);
+      if (upError) {
+        setError(upError.message);
       } else {
         await loadData();
       }
       setLoading(false);
     };
 
-    // Delete Functionality 
+    // --- 4. DELETE ASSET (Single) --- 
     const deleteAsset = async (id) => {
       if (!id) return;
-
       setLoading(true);
-      const { error } = await supabase
+      const { error: delError } = await supabase
         .from('assets')
         .delete()
         .eq('id', id);
 
-      if (error) {
+      if (delError) {
         console.error('Error deleting asset:', error);
-        setError(error.message);
+        setError(delError.message);
       } else {
         await loadData(); // Refresh the list after deletion
       }
-      setLoading(false);
+        setLoading(false);
     };
 
+    // --- 5. DELETE ASSETS (Bulk) ---
+    const deleteMultipleAssets = async (ids) => {
+      if (!ids || ids.length === 0) 
+      setLoading(true);
+      const { error: bulkDelError }= await supabase
+        .from('assets')
+        .delete()
+        .in('id', ids);
+      if (bulkDelError) setError(bulkDelError.message);
+      else await loadData();
+      setLoading(false);
+    }
+
     // Only one useEffect is needed to trigger the initial load
-    useEffect(() => {
+    useEffect( () => {
       loadData();
     }, []);
 
@@ -108,6 +128,7 @@ function useAssets() {
     addAsset,
     bulkUpsertAssets,
     deleteAsset,
+    deleteMultipleAssets,
     refreshAssets: loadData
   };
 }
