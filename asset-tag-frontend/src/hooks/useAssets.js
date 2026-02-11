@@ -116,6 +116,25 @@ function useAssets() {
       setLoading(false);
     }
 
+    // --- 6. UPDATE ---
+    const updateAsset = async (id, updatedFields) => {
+      setLoading(true);
+      const { error: updateError } = await supabase
+        .from('assets')
+        .update(updatedFields)
+        .eq('id', id);
+
+      if (updateError) {
+        setError(updateError.message);
+        setLoading(false);
+        return false;
+      } else {
+        await loadData(); //Refresh the table
+        setLoading(false);
+        return true;
+      }
+    };
+
     // Only one useEffect is needed to trigger the initial load
     useEffect( () => {
       loadData();
@@ -129,6 +148,7 @@ function useAssets() {
     bulkUpsertAssets,
     deleteAsset,
     deleteMultipleAssets,
+    updateAsset,
     refreshAssets: loadData
   };
 }

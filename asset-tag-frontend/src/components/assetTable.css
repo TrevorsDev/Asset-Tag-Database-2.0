@@ -1,107 +1,149 @@
 /* While this project is to be viewed solely by Pima County, and using their desktop configuration, my intention is always to use professional practices in my code. That includes using responsive units that will adjust to various screen sizes. */
 
-.table-wrapper {
-    border: yellow solid 1px;
+
+/* ==========================================================================
+   BLOCK: Asset Table
+   ========================================================================== */
+.asset-table {
+    width: 100%;
+    table-layout: fixed; /* The "Wooden Frame" */
+    border-collapse: collapse;
+    background: #2a2a2a;
+    color: var(--primary-font-color);
+} 
+
+/* ELEMENTS: Shared Cell Properties */
+.asset-table__header,
+.asset-table__cell {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #444;
 }
 
-.table-controls {
+/* ELEMENT: Header Specifics */
+.asset-table__header {
+    background-color: var(--primary-background-color);
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: .9rem;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* MODIFIERS: Anchor Widths (Applied to <th>) */
+.asset-table__header--checkbox { width: 3.5rem; text-align: center; }
+.asset-table__header--status   { width: 15%; }
+/* Note: We no longer need a dedicated "Actions" header width because 
+   actions are now nested in the last data column. */
+
+/* MODIFIERS: Alignment & State */
+.asset-table__cell--center { text-align: center; }
+.asset-table__cell--right  { text-align: right; }
+
+.asset-table__row {
+    transition: background-color 0.2s ease;
+}
+
+.asset-table__row:hover { 
+    background-color: var(--hover-background-color); 
+}
+
+.asset-table__row--selected { 
+    background-color: #dc354631; 
+}
+
+/* ==========================================================================
+   FEATURE: Protonmail-style Hover Actions
+   ========================================================================== */
+
+/* The Parent Cell */
+.asset-table__cell--last {
+    position: relative;
+    vertical-align: middle;
+}
+
+/* The Text Wrapper */
+.asset-table__cell-text {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: padding-right 0.2s ease;
+}
+
+/* Trigger: When row is hovered, shift text to make room for icons */
+.asset-table__row:hover .asset-table__cell-text {
+    padding-right: 5rem; 
+}
+
+/* The Ghost Container */
+.asset-table__actions-container {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
-    gap: 1em;
-    margin-bottom: 4em;
-    border: blueviolet solid 2px;
-
+    gap: 0.5rem;
+    z-index: 10; 
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    background: linear-gradient(90deg, transparent, rgb(57, 57, 57) 25%);
+    padding-left: 2rem;
 }
 
-/* Row Hover Logic: Hide trash by default, show on hover */
-.trash-button {
-    opacity: 0;
+/* Trigger: Show icons and enable clicking on row hover */
+.asset-table__row:hover .asset-table__actions-container,
+.asset-table__row:focus-within .asset-table__actions-container {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ==========================================================================
+   BLOCK: Icon Buttons (Global Reusable Component)
+   ========================================================================== */
+.icon-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: opacity 0.1s ease;
-    color: #dc3545;
-    background: transparent;
-    cursor: pointer; 
+    width: 1.8rem;
+    height: 1.8rem;
+    padding: 0;
     border: none;
-    padding: 0em;
-    width: 2em;
-    height: 2em;
+    background: transparent;
+    cursor: pointer;
+    transition: color 0.2s, background-color 0.2s;
+    border-radius: 4px;
 }
 
-.lucide {
-    width: 1em;
-    height: 1em;
-}
+.icon-button--trash { color: var(--color-danger); }
+.icon-button--trash:hover { color: var(--color-danger-bright); }
+.icon-button--edit:hover { color: #5353ff; }
 
-.trash-button:hover,
-.trash-button:active {
-    color: red;
-    transition: .25s;
-}
-
-/* Remove outline only when clicked with a mouse */
-.trash-button:focus:not(:focus-visible) {
-    outline: none; 
-}
-
-/* Apply custom outline only for keyboard focus. Removing the focus outline can hurt accessibility for keyboard users. This is the proper way to customize your UX */
-/* This works for modern borwsers only. Doesnt matter for Pima County's needs */
-.trash-button:focus-visible {
-    outline: 1px solid #dc3545;
+/* Accessibility: Keyboard Focus Only */
+.icon-button:focus-visible {
+    outline: 2px solid var(--color-danger);
     outline-offset: 2px;
 }
 
-.asset-row:hover .trash-button {
-    opacity: 1; 
+/* ==========================================================================
+   MISC / UTILITIES
+   ========================================================================== */
+.asset-table__controls {
+    display: flex;
+    gap: 1rem;
+    padding: 0 1rem;
+    margin-bottom: 2rem;
 }
 
-/* Highlight the whole row on hover for better UX */
-.asset-row:hover {
-    background-color: #f8f9fa13;
-}
-
-.selected-row {
-    background-color: #dc354631;
-}
-
-.checkbox-col {
-    width: 2.5em;
-    text-align: center;
-    /* border: 2px blue solid; */
-}
-
-
-
-
-
-
-/* Manage Button Styling */
-.manage-btn {
-    padding: 6px 12px;
-    border: 1px solid #007bff;
-    background: white;
-    color: #007bff;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.bulk-delete-btn {
-    background: #dc3545;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
+.lucide {
+    width: 1.1rem;
+    height: 1.1rem;
 }
 
 /* QUESTIONS FOR AI: 
-Im noticing that you are using ".table-wrapper {
-
-    margin-top: 20px;
-
-} " pixels for your dimensions. I want to be using something responsive. As far as i know, that really is the most professional practice. so, what units might you recommend?  
-
-
 
 Also, Im in the bay area california. what are some of the BEST tech meetups for someone who is attempting to break into the software development, or IT industry?
 

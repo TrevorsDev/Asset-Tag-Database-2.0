@@ -9,30 +9,33 @@ This component displays a table of asset data.
 */
 
 import React, { useState } from 'react';
-import { Trash2 } from 'lucide-react'; // Imports Trash icon
+import { Trash2, Pencil } from 'lucide-react'; // Imports Trash icon
 import FiltersBar from './FilterBar';
+import EditAssetModal from './EditAssetModal';
 import useAssets from '../hooks/useAssets';
-import './assetTable.css'
+import './AssetTable.css'
 
 /*
  * COMPONENT: AssetTable
  * Purpose: Displays, filters, and manages the deletion of IT assets.
  */
 const AssetTable = () => {
-// --- 1. DATA & STATE ---
-  const { assets, loading, error, deleteAsset, deleteMultipleAssets } = useAssets(); //Brought this hook to the top level of function, which is the proper way to use hooks in React.
+  // --- 1. DATA & STATE ---
+  //Brought this hook to the top level of function, which is the proper way to use hooks in React.
   const [selectedIds, setSelectedIds] = useState([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
-  
+  const { assets, loading, error, deleteAsset, deleteMultipleAssets, updateAsset } = useAssets();
+  const [selectedAsset, setSelectedAsset] = useState(null); // This holds the object to be edited
+
   // Combined filter state
-  const [filters, setFilters] = useState({ 
+  const [filters, setFilters] = useState({
     asset_tag: '',
     serial_number: '',
-    model: '', 
+    model: '',
     status: '',
     department: '',
     pr: '',
-    po: '' 
+    po: ''
   });  //Combined filter column options for all filterable columns.
 
   // --- 2. HANDLERS (Logic) ---
@@ -52,7 +55,7 @@ const AssetTable = () => {
 
   // Handles checkbox selection logic
   const toggleSelection = (id) => {
-    setSelectedIds((prev) => 
+    setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
     );
   };
@@ -66,12 +69,18 @@ const AssetTable = () => {
     }
   };
 
+  // Handles edit and save functionality
+  const handleSaveEdit = async (id, updatedData) => {
+    const success = await updateAsset(id, updatedData);
+    if (success) setSelectedAsset(null); // Close modal on success
+  }
+
   // Logic for FilterBar dropdowns
   const statusOptions = [...new Set(assets.map((a) => a.status).filter(Boolean))];
   const departmentOptions = [...new Set(assets.map((a) => a.department).filter(Boolean))];
 
-// Filtering Logic. If no filter is selected, show all assets
-// If a filter is selected, only show matching assets
+  // Filtering Logic. If no filter is selected, show all assets
+  // If a filter is selected, only show matching assets
   const filteredAssets = assets.filter((asset) => {
     return (
       (!filters.asset_tag || asset.asset_tag.toLowerCase().includes(filters.asset_tag.toLowerCase())) &&
@@ -93,9 +102,9 @@ const AssetTable = () => {
   return (
     <div className="table-wrapper">
       {/* Selection Mode Controls */}
-      <div className="table-controls">
+      <div className="asset-table__controls">
         <button
-          className={`manage-btn ${isSelectionMode ? 'active' : ''}`}
+          className={`global-btn secondary-btn ${isSelectionMode ? 'active' : ''}`}
           onClick={() => {
             setIsSelectionMode(!isSelectionMode);
             setSelectedIds([]);
@@ -105,72 +114,94 @@ const AssetTable = () => {
         </button>
 
         {isSelectionMode && selectedIds.length > 0 && (
-          <button className="bulk-delete-btn" onClick={handleBulkDelete}>
+          <button className="global-btn secondary-btn bulk-delete-btn" onClick={handleBulkDelete}>
             Delete {selectedIds.length} Selected
           </button>
         )}
       </div>
 
-    <FiltersBar
-      filters={filters}
-      onFilterChange={handleFilterChange}
-      statusOptions={statusOptions}
-      departmentOptions={departmentOptions}
-    />
+      <FiltersBar
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        statusOptions={statusOptions}
+        departmentOptions={departmentOptions}
+      />
 
-    <table className="asset-table">
-      <thead>
-        <tr>
-          {/* Checkbox column only shows in selection mode */}
-          {isSelectionMode && <th className="checkbox-col"></th>}
-          <th>Asset Tag</th>
-          <th>Serial Number</th>
-          <th>Model</th>
-          <th>Status</th>
-          <th>Department</th>
-          <th>Purchase Request</th>
-          <th>Purchase Order</th>
-          <th></th> { /* Empty header resembling Protonmail's trashcan experiecne. Delete funcitonality */ }
-        </tr>
-      </thead>
-      <tbody>
-        {/* Loop through the filtered assets and render each row */}
-        {filteredAssets.map((asset) => (
-          <tr 
-            key={asset.id}
-            className={`asset-row ${selectedIds.includes(asset.id) ? 'selected-row' : ''}`}
-          >
-            {isSelectionMode && (
-              <td className="checkbox-col">
-                <input 
-                  type="checkbox"
-                  checked={selectedIds.includes(asset.id)}
-                  onChange={() => toggleSelection(asset.id)}
-                />
-              </td>
-            )}
-            <td>{asset.asset_tag}</td>
-            <td>{asset.serial_number}</td>
-            <td>{asset.model}</td>
-            <td>{asset.status}</td>
-            <td>{asset.department}</td>
-            <td>{asset.pr}</td>
-            <td>{asset.po}</td>
-            <td>
-              {/* The Delete Button itself */}
-              <button 
-                className="trash-button"
-                onClick={() => handleDeleteClick(asset.id, asset.asset_tag)} 
-                aria-label={`Delete asset ${asset.asset_tag}`}
-                title="Delete Asset" 
-              >
-                <Trash2 /> {/* The Icon Component */}
-              </button>
-            </td>
+      <table className="asset-table u-flex-center">
+        <thead class="asset-table__header ">
+          <tr>
+            {/* Checkbox column only shows in selection mode */}
+            {isSelectionMode && <th className=" asset-table__header--checkbox checkbox-col"></th>}
+            <th class="asset-table__header asset-table__header--tag" title="Asset Tag">Asset Tag</th>
+            <th className="asset-table__header" title="Serial Number">Serial Number</th>
+            <th className="asset-table__header" title="Model">Model</th>
+            <th className="asset-table__header asset-table__header--status" title="Status">Status</th>
+            <th className="asset-table__header" title="Department">Department</th>
+            <th className="asset-table__header" title="Purchase Request">Purchase Request</th>
+            <th className="asset-table__header" title="Purchase Order">Purchase Order</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {/* Loop through the filtered assets and render each row */}
+          {filteredAssets.map((asset) => (
+            <tr
+              key={asset.id}
+              className={`asset-table__row ${selectedIds.includes(asset.id) ? 'asset-table__row--selected' : ''}`}
+            >
+              {isSelectionMode && (
+                <td className="asset-table__cell--center checkbox-col">
+                  <input
+                    type="checkbox"
+                    checked={selectedIds.includes(asset.id)}
+                    onChange={() => toggleSelection(asset.id)}
+                  />
+                </td>
+              )}
+              <td className="asset-table__cell asset-table__cell--center" title={asset.asset_tag}>{asset.asset_tag}</td>
+              <td className="asset-table__cell asset-table__cell--center" title={asset.serial_number}>{asset.serial_number}</td>
+              <td className="asset-table__cell asset-table__cell--center" title={asset.model}>{asset.model}</td>
+              <td className="asset-table__cell asset-table__cell--center" title={asset.status}>{asset.status}</td>
+              <td className="asset-table__cell asset-table__cell--center" title={asset.department}>{asset.department}</td>
+              <td className="asset-table__cell asset-table__cell--center" title={asset.pr}>{asset.pr}</td>
+              <td className="asset-table__cell asset-table__cell--center asset-table__cell--last" title={asset.po}>{/* The text wrapper is key here */}
+                <span className="asset-table__cell-text" title={asset.po}>
+                  {asset.po}
+                </span>
+                
+                {/* The Delete Button itself */}
+                <div className="asset-table__actions-container">
+                  <button
+                    className="icon-button icon-button--trash"
+                    onClick={() => handleDeleteClick(asset.id, asset.asset_tag)}
+                    aria-label={`Delete asset ${asset.asset_tag}`}
+                    title="Delete Asset"
+                  >
+                    <Trash2 /> {/* The Icon Component */}
+                  </button>
+                  {/* The edit button itself */}
+                  <button
+                    className="icon-button icon-button--edit"
+                    onClick={() => setSelectedAsset(asset.id)}
+                    aria-label={`Edit asset ${asset.asset_tag}`}
+                  >
+                    <Pencil />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* RENDER MODAL */}
+      {selectedAsset && (
+        <EditAssetModal
+          asset={selectedAsset}
+          isOpen={!!selectedAsset}
+          onClose={() => setSelectedAsset(null)}
+          onSave={handleSaveEdit}
+        />
+      )}
     </div>
   );
 }

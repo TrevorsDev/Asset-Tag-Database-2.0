@@ -16,6 +16,7 @@ It does it by:
 */
 
 import React, { useState, useRef } from 'react';
+import '../../App.css';
 import './CSVUploader.css'; // Import the new stylesheet
 
 /**
@@ -107,17 +108,17 @@ const CSVUploader = ({ onDataParsed }) => {
         id="csv-upload-input"
       />
       
-      <label htmlFor="csv-upload-input" className="upload-label">
+      <label htmlFor="csv-upload-input" className=" global-btn primary-btn upload-label">
         {loading ? 'Processing...' : 'Choose a .csv file to upload'}
       </label>
       
       {tempData.length > 0 && (
         <div className="upload-preview-box">
           <p><strong>{tempData.length}</strong> rows ready to upload.</p>
-          <button className="confirm-btn" onClick={handleUpload} disabled={loading}>
+          <button className="global-btn primary-btn confirm-btn" onClick={handleUpload} disabled={loading}>
             {loading ? 'Uploading...' : 'Confirm & Upload to Database'}
           </button>
-          <button className="cancel-btn" onClick={() => setTempData([])} disabled={loading}>
+          <button className="global-btn primary-btn cancel-btn" onClick={() => setTempData([])} disabled={loading}>
             Cancel
           </button>
         </div>

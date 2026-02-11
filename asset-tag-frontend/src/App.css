@@ -1,0 +1,79 @@
+/* Base layer — variables and base button styles */
+
+@layer base {
+    :root {
+    --color-danger: #dc3545;
+    --color-danger-bright: #ff0019;
+    --btn-color-primary: #3788d8;
+    --primary-font-color: #ffff;
+    --primary-background-color: #333;
+    --hover-background-color: #f8f9fa13;
+    --font-weight-normal: 500;
+    }
+
+    .global-btn {
+        border-radius: 5px;
+        font-family: inherit;
+        cursor: pointer;
+        transition: .5s;
+        border: none;
+    }
+}
+
+/* Components layer — specific button variants */
+@layer components {
+    .primary-btn {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        font-weight: var(--font-weight-normal);
+        color:var(--primary-font-color);
+        background-color: var(--btn-color-primary);
+
+    }
+
+    .secondary-btn {
+        padding: 0.5rem .75rem;
+        font-size: .90rem;
+        font-weight: var(--font-weight-normal);
+        color: var(--primary-font-color);
+        background-color: var(--btn-color-primary);
+    }
+
+    .global-btn:active,
+    .global-btn:hover {
+        background-color: #2c3e50;
+        border: transparent;
+        outline: none;
+    }
+
+    /* Remove default focus ring when :focus-visible should not apply */
+    .global-btn:focus:not(:focus-visible),
+    .global-btn:active {
+        outline: none;
+        border: none;
+    }
+    
+    .global-btn:focus-visible  {
+    outline-offset: 1px;
+    }
+
+/* Utility layer  */
+@layer utility {
+    .u-flex-center {
+        display: table;
+        margin-left: auto;
+        margin-right: auto;
+        border:#ff0019 solid 
+    }
+}
+
+}
+
+
+/* Using @layer:
+
+- Styles in utilities override components, even with lower specificity
+- Solves "selector wars" and makes CSS more predictable
+- Supported in all modern browsers since 2022
+
+*/

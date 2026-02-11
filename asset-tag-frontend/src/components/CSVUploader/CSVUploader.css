@@ -11,34 +11,36 @@
   display: none;
 }
 
-.upload-label {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #000000;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.upload-label:hover {
-  background-color: #00162d;
-}
-
 .upload-preview-box {
   margin-top: 15px;
   padding: 15px;
-  background-color: #e3f2fd;
+  background-color: transparent;
   border-radius: 4px;
 }
 
-.confirm-btn {
+/* Confirm button styling and animation. Targeting the parent container's class first ensures that this styling is prioritized over global styling */
+.upload-preview-box .confirm-btn {
   background-color: #28a745;
   color: white;
-  margin-right: 10px;
+  margin-right: 2rem;
 }
 
-.cancel-btn {
-  background-color: #dc3545;
+.upload-preview-box .confirm-btn:hover {
+  background-color: #1bcf45;
+  /* transition: .5s; */
+}
+
+.upload-preview-box .cancel-btn {
+  background-color: var(--color-danger);
   color: white;
 }
+
+.upload-preview-box .cancel-btn:hover {
+  background-color:  var(--color-danger-bright);;
+  /* transition: .5s; */
+}
+
+
+
+
+

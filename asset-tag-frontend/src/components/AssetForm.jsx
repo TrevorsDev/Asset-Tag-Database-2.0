@@ -11,6 +11,7 @@
 
 import React, { useState } from 'react';
 import { validateAssetForm } from '../utils/validation';
+import '../App.css';
 
 function AssetForm({ onSubmit }) {
   const [formData, setFormData] = useState({
@@ -87,7 +88,7 @@ return (
         {errors?.po && <p style={{ color: 'red' }}>{errors.po}</p>}
         <input type="text" placeholder="Purchase Order" value={formData.po} onChange={(e) => updateField('po', e.target.value)} />
 
-        <button type="submit">Add Asset</button>
+        <button className = "global-btn secondary-btn" type="submit">Add Asset</button>
       </form>
     </div>
 
