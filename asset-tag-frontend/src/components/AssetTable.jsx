@@ -110,7 +110,7 @@ const AssetTable = () => {
             setSelectedIds([]);
           }}
         >
-          {isSelectionMode ? 'Cancel Selection' : 'Delete Multiple'}
+          {isSelectionMode ? 'Cancel Selection' : 'Delete Assets'}
         </button>
 
         {isSelectionMode && selectedIds.length > 0 && (
@@ -167,7 +167,7 @@ const AssetTable = () => {
                 <span className="asset-table__cell-text" title={asset.po}>
                   {asset.po}
                 </span>
-                
+
                 {/* The Delete Button itself */}
                 <div className="asset-table__actions-container">
                   <button

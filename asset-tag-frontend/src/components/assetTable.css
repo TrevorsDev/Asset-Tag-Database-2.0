@@ -124,8 +124,7 @@
 
 /* Accessibility: Keyboard Focus Only */
 .icon-button:focus-visible {
-    outline: 2px solid var(--color-danger);
-    outline-offset: 2px;
+    outline: 1px solid var(--color-danger);
 }
 
 /* ==========================================================================
@@ -141,6 +140,14 @@
 .lucide {
     width: 1.1rem;
     height: 1.1rem;
+}
+
+.bulk-delete-btn {
+    background-color: var(--color-danger);
+}
+
+.bulk-delete-btn:hover {
+    background-color: var(--color-danger-bright);
 }
 
 /* QUESTIONS FOR AI: 

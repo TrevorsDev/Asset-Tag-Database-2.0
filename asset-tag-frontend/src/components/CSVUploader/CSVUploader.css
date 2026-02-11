@@ -7,8 +7,21 @@
   text-align: center;
 }
 
+/* Making the input focusable but visually invisable  */
 .hidden-file-input {
-  display: none;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  border: 0;
+}
+
+/* Style the label when the input is focused on. Accessability forward */
+.hidden-file-input:focus-visible + .upload-label {
+  outline: 1px solid var(--color-danger);
+  background-color: var(--hover-background-color);
 }
 
 .upload-preview-box {
