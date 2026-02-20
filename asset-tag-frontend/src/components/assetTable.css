@@ -8,27 +8,31 @@
     width: 100%;
     table-layout: fixed; /* The "Wooden Frame" */
     border-collapse: collapse;
-    background: #2a2a2a;
-    color: var(--primary-font-color);
+    background: var(--color-bg-surface);
+    color: var(--color-text-main);
+    border-radius: 8px;
+    overflow: hidden; /* Clips the corners of the rows to the border-radius */
 } 
 
 /* ELEMENTS: Shared Cell Properties */
-.asset-table__header,
-.asset-table__cell {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid #444;
-}
 
 /* ELEMENT: Header Specifics */
 .asset-table__header {
-    background-color: var(--primary-background-color);
+    background-color: #16202e; /* Slightly darker than surface for contrast */
+    color: var(--color-text-muted);
     font-weight: 800;
+    padding: 1rem;
     text-transform: uppercase;
     font-size: .9rem;
-    letter-spacing: 0.05em;
-    white-space: nowrap;
+    letter-spacing: 0.1em;
+    border-bottom: 2px solid var(--color-border-subtle);
     overflow: hidden;
-    text-overflow: ellipsis;
+}
+
+.asset-table__cell {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+    font-size: 0.875rem;
 }
 
 /* MODIFIERS: Anchor Widths (Applied to <th>) */
@@ -46,7 +50,7 @@
 }
 
 .asset-table__row:hover { 
-    background-color: var(--hover-background-color); 
+    background-color: rgba(255, 255, 255, 0.03); /* Subtle glass effect */ 
 }
 
 .asset-table__row--selected { 
@@ -90,7 +94,8 @@
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s ease;
-    background: linear-gradient(90deg, transparent, rgb(57, 57, 57) 25%);
+    background: linear-gradient(90deg, transparent, var(--color-bg-surface) 25%);
+    border-radius: 10px;
     padding-left: 2rem;
 }
 
@@ -118,13 +123,13 @@
     border-radius: 4px;
 }
 
-.icon-button--trash { color: var(--color-danger); }
-.icon-button--trash:hover { color: var(--color-danger-bright); }
-.icon-button--edit:hover { color: #5353ff; }
+.icon-button--trash { color: var(--color-status-danger); }
+.icon-button--trash:hover { color: var(--color-status-danger-max); }
+.icon-button--edit:hover { color: var(--color-action-edit); }
 
 /* Accessibility: Keyboard Focus Only */
 .icon-button:focus-visible {
-    outline: 1px solid var(--color-danger);
+    outline: 1px solid var(--color-status-danger);
 }
 
 /* ==========================================================================
@@ -143,12 +148,13 @@
 }
 
 .bulk-delete-btn {
-    background-color: var(--color-danger);
+    background-color: var(--color-status-danger);
 }
 
 .bulk-delete-btn:hover {
-    background-color: var(--color-danger-bright);
+    background-color: var(--color-status-danger-max);
 }
+
 
 /* QUESTIONS FOR AI: 
 

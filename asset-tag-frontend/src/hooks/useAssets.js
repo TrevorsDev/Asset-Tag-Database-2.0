@@ -118,6 +118,10 @@ function useAssets() {
 
     // --- 6. UPDATE ---
     const updateAsset = async (id, updatedFields) => {
+      if (!id) {
+        setError("Update failed: No ID provided");
+        return false
+      }
       setLoading(true);
       const { error: updateError } = await supabase
         .from('assets')
@@ -127,11 +131,11 @@ function useAssets() {
       if (updateError) {
         setError(updateError.message);
         setLoading(false);
-        return false;
+        return false; // Tells AssetTable "Stay open, there's an error"
       } else {
-        await loadData(); //Refresh the table
+        await loadData(); // Refresh the table
         setLoading(false);
-        return true;
+        return true; // Tells AssetTablre "Close the modal now"
       }
     };
 
@@ -144,6 +148,7 @@ function useAssets() {
     assets,
     loading,
     error,
+    setError,
     addAsset,
     bulkUpsertAssets,
     deleteAsset,

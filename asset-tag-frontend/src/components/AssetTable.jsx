@@ -24,7 +24,7 @@ const AssetTable = () => {
   //Brought this hook to the top level of function, which is the proper way to use hooks in React.
   const [selectedIds, setSelectedIds] = useState([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
-  const { assets, loading, error, deleteAsset, deleteMultipleAssets, updateAsset } = useAssets();
+  const { assets, loading, error, setError, deleteAsset, deleteMultipleAssets, updateAsset } = useAssets();
   const [selectedAsset, setSelectedAsset] = useState(null); // This holds the object to be edited
 
   // Combined filter state
@@ -71,9 +71,22 @@ const AssetTable = () => {
 
   // Handles edit and save functionality
   const handleSaveEdit = async (id, updatedData) => {
-    const success = await updateAsset(id, updatedData);
-    if (success) setSelectedAsset(null); // Close modal on success
-  }
+    // We await the result from your useAssets hook
+    const isSuccessful = await updateAsset(id, updatedData);
+
+    // If the hook is set up to return 'false' or an error object on failure
+    if (isSuccessful) {
+      // Clear the error and close the modal only if it actually worked
+      setError(null);
+      setSelectedAsset(null); 
+    } 
+  };
+
+  // Dedicated closer to keep the code clean
+  const handleCloseModal = () => {
+    setError(null); // Clears the hook's state
+    setSelectedAsset(null); // Hides the modal
+  };
 
   // Logic for FilterBar dropdowns
   const statusOptions = [...new Set(assets.map((a) => a.status).filter(Boolean))];
@@ -96,11 +109,11 @@ const AssetTable = () => {
   //--- 3. RENDER HELPER (Prevents clutter in return statement) ---
   // Simple Error/Loading UI
   if (loading && assets.length === 0) return <p>Loading assets...</p>;
-  if (error) return <p style={{ color: 'red' }}>Error: {error}</p>;
 
   // Render the table
   return (
-    <div className="table-wrapper">
+    <div className="asset-table-container">
+
       {/* Selection Mode Controls */}
       <div className="asset-table__controls">
         <button
@@ -128,11 +141,11 @@ const AssetTable = () => {
       />
 
       <table className="asset-table u-flex-center">
-        <thead class="asset-table__header ">
+        <thead className="asset-table__header ">
           <tr>
             {/* Checkbox column only shows in selection mode */}
             {isSelectionMode && <th className=" asset-table__header--checkbox checkbox-col"></th>}
-            <th class="asset-table__header asset-table__header--tag" title="Asset Tag">Asset Tag</th>
+            <th className="asset-table__header asset-table__header--tag" title="Asset Tag">Asset Tag</th>
             <th className="asset-table__header" title="Serial Number">Serial Number</th>
             <th className="asset-table__header" title="Model">Model</th>
             <th className="asset-table__header asset-table__header--status" title="Status">Status</th>
@@ -181,7 +194,7 @@ const AssetTable = () => {
                   {/* The edit button itself */}
                   <button
                     className="icon-button icon-button--edit"
-                    onClick={() => setSelectedAsset(asset.id)}
+                    onClick={() => setSelectedAsset(asset)}
                     aria-label={`Edit asset ${asset.asset_tag}`}
                   >
                     <Pencil />
@@ -198,8 +211,9 @@ const AssetTable = () => {
         <EditAssetModal
           asset={selectedAsset}
           isOpen={!!selectedAsset}
-          onClose={() => setSelectedAsset(null)}
+          onClose={handleCloseModal} // Close error inside the modal 
           onSave={handleSaveEdit}
+          error={error} // Pass the error state from your useAssets hook
         />
       )}
     </div>

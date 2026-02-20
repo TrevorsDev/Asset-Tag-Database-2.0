@@ -39,17 +39,17 @@
 }
 
 .upload-preview-box .confirm-btn:hover {
-  background-color: #1bcf45;
+  background-color: var(--color-action-hover);
   /* transition: .5s; */
 }
 
 .upload-preview-box .cancel-btn {
-  background-color: var(--color-danger);
+  background-color: var(--color-status-danger);
   color: white;
 }
 
 .upload-preview-box .cancel-btn:hover {
-  background-color:  var(--color-danger-bright);;
+  background-color:  var(--color-status-danger-max);;
   /* transition: .5s; */
 }
 

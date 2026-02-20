@@ -1,22 +1,33 @@
 /* Base layer — variables and base button styles */
 
 @layer base {
-    :root {
-    --color-danger: #dc3545;
-    --color-danger-bright: #ff0019;
-    --btn-color-primary: #3788d8;
-    --btn-bright: #47b6ff;
-    --primary-font-color: #ffff;
-    --primary-background-color: #333;
-    --hover-background-color: #f8f9fa13;
-    --font-weight-normal: 500;
+    :root { 
+    /* --- SURFACE & BACKGROUNDS --- */
+    --color-bg-main: #0f172a;           /* Deep Navy/Slate */
+    --color-bg-surface: #1e293b;        /* Lighter Slate for cards/modals */
+    --color-border-subtle: #334155;     /* Soft slate border */
+    
+    /* --- BRAND & ACTION COLORS --- */
+    --color-action-primary: #10b981;     /* Emerald 500 */
+    --color-action-hover: #059669;       /* Emerald 600 */
+
+    /* Accesnts: For Edits */
+    --color-action-edit: #3b82f6;       /* Vivid Blue */
+
+    /* --- STATUS & FEEDBACK ---*/
+    --color-status-danger: #ef4444;     /* Rose Red */
+    --color-status-danger-max: #f59e0b;    /* Amber */
+
+    /* --- TYPOGRAPHY --- */
+    --color-text-main: #f8fafc;         /* Off-white (Slate 50) */
+    --color-text-muted: #94a3b8;        /* Muted Blue-Gray */
     }
 
     .global-btn {
         border-radius: 5px;
         font-family: inherit;
         cursor: pointer;
-        transition: .5s;
+        transition: 0.3s ease;
         border: none;
     }
 }
@@ -26,10 +37,9 @@
     .primary-btn {
         padding: 0.75rem 1rem;
         font-size: 1rem;
-        font-weight: var(--font-weight-normal);
-        color:var(--primary-font-color);
-        background-color: var(--btn-color-primary);
-
+        font-weight: var(--font-weight-medium);
+        color:var(--color-text-main);
+        background-color: var(--color-action-primary);
     }
 
     .secondary-btn {
@@ -42,7 +52,7 @@
 
     .global-btn:active,
     .global-btn:hover {
-        background-color: var(--btn-bright);
+        background-color: var(--color-action-hover);
         border: transparent;
         outline: none;
     }
@@ -63,8 +73,7 @@
     .u-flex-center {
         display: table;
         margin-left: auto;
-        margin-right: auto;
-        border:#ff0019 solid 
+        margin-right: auto; 
     }
 }
 

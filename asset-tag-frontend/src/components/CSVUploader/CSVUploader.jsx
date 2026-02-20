@@ -116,7 +116,7 @@ const CSVUploader = ({ onDataParsed }) => {
         <div className="upload-preview-box">
           <p><strong>{tempData.length}</strong> rows ready to upload.</p>
           <button className="global-btn primary-btn confirm-btn" onClick={handleUpload} disabled={loading}>
-            {loading ? 'Uploading...' : 'Confirm & Upload to Database'}
+            {loading ? 'Uploading...' : 'Confirm & Upload'}
           </button>
           <button className="global-btn primary-btn cancel-btn" onClick={() => setTempData([])} disabled={loading}>
             Cancel
