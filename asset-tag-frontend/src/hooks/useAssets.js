@@ -12,10 +12,6 @@ This is a custom React hook that manages asset data from Supabase.
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 
-/* 
-- Standalone function for non-hook usage 
-- Exported so other files can fetch data without using the hook.
-*/
 export async function fetchAssets() {
   const { data, error } = await supabase
     .from('assets')
@@ -31,7 +27,6 @@ function useAssets() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // --- 1. READ ---
   const loadData = async () => {
     setLoading(true);
     try {
@@ -46,115 +41,100 @@ function useAssets() {
     }
   };
 
-  // --- 2. CREATE ---
   const addAsset = async (newAsset) => {
-    const { error: insError } = await supabase
-      .from('assets')
-      .insert([newAsset]);
-
-    if (insError) {
-      console.error('Error inserting asset:', insError);
-      return false;
-    }
+    const { error: insError } = await supabase.from('assets').insert([newAsset]);
+    if (insError) return false;
     await loadData();
     return true;
   };
 
-  // --- 3. BULK UPSERT (CSV File) --- 
   const bulkUpsertAssets = async (csvData) => {
     setLoading(true);
-    const mappedData = csvData.map(row => ({
-      asset_tag: row.asset_tag,
-      pr: row.pr,
-      status: row.status,
-      po: row.po,
-      serial_number: row.sn || row.serial_number,
-      model: row.model,
-      department: row.dept || row.department,
-    }));
-  
+    const aliasMap = {
+      'at': 'asset_tag', 'tag': 'asset_tag', 'sn': 'serial_number',
+      'dept': 'department', 'purchase request': 'pr', 'purchase_order': 'po',
+      'comments': 'notes', 'remarks': 'notes'
+    };
+
+    const validColumns = ['asset_tag', 'serial_number', 'model', 'status', 'department', 'pr', 'po', 'notes'];
+    
+    const mappedData = csvData.map(row => {
+      const newRow = {};
+      Object.keys(row).forEach(key => {
+        const cleanKey = key.toLowerCase().trim();
+        const targetKey = aliasMap[cleanKey] || cleanKey;
+        if (validColumns.includes(targetKey)) {
+          newRow[targetKey] = row[key];
+        } 
+      });
+      return newRow;
+    });
+
     const { error: upError } = await supabase
       .from('assets')
       .upsert(mappedData, { onConflict: 'asset_tag' });
 
-      if (upError) {
-        setError(upError.message);
+    if (upError) {
+      console.error("SUPABASE_UPSERT_ERROR:", upError);
+      // Logic: If it's a 23505 error, it's the Serial Number blocking the upload
+      if (upError.code === '23505') {
+        setError("Upload failed: A serial number in your file already exists under a different tag. Please resolve duplicates.");
       } else {
-        await loadData();
+        setError(`Upload failed: ${upError.message}`);
       }
-      setLoading(false);
-    };
-
-    // --- 4. DELETE ASSET (Single) --- 
-    const deleteAsset = async (id) => {
-      if (!id) return;
-      setLoading(true);
-      const { error: delError } = await supabase
-        .from('assets')
-        .delete()
-        .eq('id', id);
-
-      if (delError) {
-        console.error('Error deleting asset:', error);
-        setError(delError.message);
-      } else {
-        await loadData(); // Refresh the list after deletion
-      }
-        setLoading(false);
-    };
-
-    // --- 5. DELETE ASSETS (Bulk) ---
-    const deleteMultipleAssets = async (ids) => {
-      if (!ids || ids.length === 0) 
-      setLoading(true);
-      const { error: bulkDelError }= await supabase
-        .from('assets')
-        .delete()
-        .in('id', ids);
-      if (bulkDelError) setError(bulkDelError.message);
-      else await loadData();
-      setLoading(false);
+    } else {
+      console.log("UPSERT_SUCCESSFUL");
+      // Update local state so UI updates instantly
+      setAssets(prevAssets => {
+        const incomingMap = new Map(mappedData.map(item => [item.asset_tag, item]));
+        const filteredOldAssets = prevAssets.filter(asset => !incomingMap.has(asset.asset_tag));
+        return [...mappedData, ...filteredOldAssets];
+      });
+      setError(null);
     }
+    setLoading(false);
+  };
 
-    // --- 6. UPDATE ---
-    const updateAsset = async (id, updatedFields) => {
-      if (!id) {
-        setError("Update failed: No ID provided");
-        return false
-      }
-      setLoading(true);
-      const { error: updateError } = await supabase
-        .from('assets')
-        .update(updatedFields)
-        .eq('id', id);
+  const deleteAsset = async (id) => {
+    if (!id) return;
+    setLoading(true);
+    const { error: delError } = await supabase.from('assets').delete().eq('id', id);
+    if (delError) setError(delError.message);
+    else await loadData();
+    setLoading(false);
+  };
 
-      if (updateError) {
-        setError(updateError.message);
-        setLoading(false);
-        return false; // Tells AssetTable "Stay open, there's an error"
-      } else {
-        await loadData(); // Refresh the table
-        setLoading(false);
-        return true; // Tells AssetTablre "Close the modal now"
-      }
-    };
+  const deleteMultipleAssets = async (ids) => {
+    if (!ids || ids.length === 0) return;
+    setLoading(true);
+    const { error: bulkDelError } = await supabase.from('assets').delete().in('id', ids);
+    if (bulkDelError) setError(bulkDelError.message);
+    else await loadData();
+    setLoading(false);
+  };
 
-    // Only one useEffect is needed to trigger the initial load
-    useEffect( () => {
-      loadData();
-    }, []);
+  const updateAsset = async (id, updatedFields) => {
+    if (!id) return false;
+    setLoading(true);
+    const { error: updateError } = await supabase.from('assets').update(updatedFields).eq('id', id);
+    if (updateError) {
+      setError(updateError.message);
+      setLoading(false);
+      return false;
+    } else {
+      await loadData();
+      return true;
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   return {
-    assets,
-    loading,
-    error,
-    setError,
-    addAsset,
-    bulkUpsertAssets,
-    deleteAsset,
-    deleteMultipleAssets,
-    updateAsset,
-    refreshAssets: loadData
+    assets, loading, error, setError,
+    addAsset, bulkUpsertAssets, deleteAsset,
+    deleteMultipleAssets, updateAsset, refreshAssets: loadData
   };
 }
 

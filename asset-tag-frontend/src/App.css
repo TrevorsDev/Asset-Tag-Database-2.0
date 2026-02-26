@@ -1,4 +1,5 @@
 /* Base layer — variables and base button styles */
+/* In a professional architecture, we categorize feedback colors into Base (the core color), Surface (the translucent background), and Border. */
 
 @layer base {
     :root { 
@@ -17,6 +18,17 @@
     /* --- STATUS & FEEDBACK ---*/
     --color-status-danger: #ef4444;     /* Rose Red */
     --color-status-danger-max: #f59e0b;    /* Amber */
+
+    /* Error Variants */
+    /* Using a 15% opacity version of the red for the background */
+    --color-error-bg: rgba(239, 68, 68, 0.15);
+    /* A slightly brighter red for the border to make it "pop" */
+    --color-error-border: rgba(239, 68, 68, 0.5);
+    /* High contrast text for readability */
+    --color-error-text: #fca5a5;
+
+    /* --- UI Helpers --- */
+    --radius-md: 8px;
 
     /* --- TYPOGRAPHY --- */
     --color-text-main: #f8fafc;         /* Off-white (Slate 50) */

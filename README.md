@@ -59,11 +59,11 @@ Asset_Tag_Database_2.0/
 - Form built to add new assets
 - Validation and error handling implemented
 - App renders successfully in browser
+
+### ⚔️ Code Standards
+- Semantic HTML: Prioritizes the use of descriptive tags (`<section>`, `<label>`, `<p>`) over generic `<div>` nesting to improve accessibility and SEO.
+
 - **Data Management:** Custom `useAssets` hook manages fetching and bulk data operations.
-- **FiltersBar:** Centralized filtering system using reusable `ColumnFilter` components for scalability.
-- **CSV Import:** - Custom parser built using the browser's **File API**.
-  - **Mapping Layer:** Automatically translates inconsistent CSV headers (like 'sn' or 'dept') into database-compliant fields.
-  - **Review State:** Implemented a two-stage "Upload -> Confirm" workflow to prevent accidental database writes.
 
 ### ✅ FiltersBar Component
 - Introduced a centralized `FiltersBar` component to manage all column filters.
@@ -75,10 +75,14 @@ Asset_Tag_Database_2.0/
 - Simplifies the UI and keeps the code DRY (Don't Repeat Yourself).
 
 ### ✅ CSVUploader Component
-- Added a new `CSVUploader` component to support uploading `.csv` files.
-- Built a custom CSV parser using the FileReader API (no third-party libraries).
-- Parses thousands of rows and maps them to asset objects.
-- Validates headers and displays the number of parsed rows.
+The `CSVUploader` provides a robust interface for importing bulk data into the registry.
+
+- **Custom Parsing Engine:** Built using the browser's **File API** to parse thousands of rows locally without third-party library overhead.
+- **Header Mapping Layer:** Automatically translates inconsistent CSV headers (e.g., 'sn' → 'serial_number', 'dept' → 'department') into database-compliant fields.
+- **Two-Stage "Review State":** Implements an "Upload -> Confirm" workflow, allowing users to verify row counts before committing to the database.
+- **Strict Mode Enforcement:** - Validates uniqueness across both **Asset Tags** and **Serial Numbers**. 
+  - If two different Asset Tags claim the same Serial Number, the database blocks the write to prevent data corruption.
+- **Smart Error Handling:** Distinguishes between **Local Errors** (invalid file types/formatting) and **Database Errors** (duplicate records/constraint violations), providing specific feedback to the user.
 
 ---
 
@@ -88,7 +92,6 @@ Asset_Tag_Database_2.0/
 2. Navigate to the frontend folder:
    ```bash
    cd asset-tag-frontend
-
 3. Install dependencies:
    npm install
 
@@ -108,10 +111,11 @@ Next Steps
    🔲 - Adding a loading spinner or "No results found" message? (Next iteration)
    🔲 - Creating a “Clear All Filters” button? (Next iteration)
 ✅ Add CSV import support (with Upsert mapping)
-🔲 Add edit/update and delete functionality
+✅ Add edit/update and delete functionality
 🔲 Add authentication and secure access
 🔲 Deploy MVP and test full workflow
 📝 Notes
+
 - This project is being developed as a learning tool to understand full-stack development, database design, and frontend/backend integration.
 - Supabase is used to simplify backend setup while maintaining SQL control.
 -React is used to build a responsive, modern frontend with real-time data interaction.

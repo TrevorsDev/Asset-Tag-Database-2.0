@@ -152,6 +152,7 @@ const AssetTable = () => {
             <th className="asset-table__header" title="Department">Department</th>
             <th className="asset-table__header" title="Purchase Request">Purchase Request</th>
             <th className="asset-table__header" title="Purchase Order">Purchase Order</th>
+            <th className="asset-table__header" title="Notes">Notes</th>
           </tr>
         </thead>
         <tbody>
@@ -176,10 +177,13 @@ const AssetTable = () => {
               <td className="asset-table__cell asset-table__cell--center" title={asset.status}>{asset.status}</td>
               <td className="asset-table__cell asset-table__cell--center" title={asset.department}>{asset.department}</td>
               <td className="asset-table__cell asset-table__cell--center" title={asset.pr}>{asset.pr}</td>
-              <td className="asset-table__cell asset-table__cell--center asset-table__cell--last" title={asset.po}>{/* The text wrapper is key here */}
-                <span className="asset-table__cell-text" title={asset.po}>
-                  {asset.po}
+              <td className="asset-table__cell asset-table__cell--center" title={asset.po}>{asset.po}</td>{/* The text wrapper is key here */}
+
+              <td className="asset-table__cell asset-table__cell--center asset-table__cell--last" title={asset.notes}>
+                <span className="asset-table__cell-text" title={asset.notes}>
+                  {asset.notes}
                 </span>
+              
 
                 {/* The Delete Button itself */}
                 <div className="asset-table__actions-container">

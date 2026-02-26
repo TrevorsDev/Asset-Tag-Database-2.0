@@ -42,15 +42,26 @@ const parseCSV = (csvString) => {
   return result;
 };
 
-const CSVUploader = ({ onDataParsed }) => {
+/* 'localError' prevents confusion with the database error coming from the 'useAssets' hook. */
+const CSVUploader = ({ onDataParsed, externalError, clearExternalError }) => {
   const [tempData, setTempData] = useState([]);
-  const [error, setError] = useState(null);
+  // 'localError' specifically for file-parsing issues
+  const [localError, setLocalError] = useState(null);
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
+
+  const handleClear = () => {
+    setLocalError(null);
+    if (clearExternalError) clearExternalError();
+  }
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
+
+    // Clear previous errors (both local and from the database) when a new file is picked
+    setLocalError(null);
+    if (clearExternalError) clearExternalError();
 
     if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
       setError("Please upload a valid .csv file.");
@@ -58,40 +69,38 @@ const CSVUploader = ({ onDataParsed }) => {
     }
 
     setLoading(true);
-    setError(null);
 
     // This line creates a new instance of the browser's "FileReader" tool
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
         const csvContent = e.target.result;
-        const parsedData = parseCSV(csvContent); 
+        const parsedData = parseCSV(csvContent);
         console.log(`Successfully parsed ${parsedData.length} rows.`);
-        setTempData(parsedData); 
+        setTempData(parsedData);
       } catch (err) {
-        setError(`Error parsing file: ${err.message}`);
+        setLocalError(`Error parsing file: ${err.message}`);
       } finally {
         setLoading(false);
       }
     };
-
-    reader.onerror = () => {
-      setError("Failed to read file.");
-      setLoading(false);
-    };
-
     // This line tells that browser tool to start reading the file
     reader.readAsText(file);
   };
 
   const handleUpload = async () => {
     setLoading(true);
+    // Clear local error because we are now attempting the database move
+    setLocalError(null);
+
     try {
       await onDataParsed(tempData);
-      setTempData([]); 
-      if (fileInputRef.current) fileInputRef.current.value = ""; 
+      // If the line above succeeds, clear the preview
+      setTempData([]);
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err) {
-      setError("Upload failed. Please try again.");
+      /* Professional Note: We leave 'setError' out here. The 'useAssets' hook will catch the Supabase error and pass it back to us via the 'externalError' prop. 
+      */
     } finally {
       setLoading(false);
     }
@@ -107,11 +116,31 @@ const CSVUploader = ({ onDataParsed }) => {
         className="hidden-file-input"
         id="csv-upload-input"
       />
-      
+
+      {/* ERROR DISPLAY:
+    This logic shows either a local fiile error OR the database error.
+    */}
+      {(localError || externalError) && (
+        <section className="error-message-box" aria-live="assertive">
+          <div className="error-content">
+            <span className="error-icon" aria-hidden="true">⚠️</span>
+            <p>
+              <strong>Upload Error:</strong> {localError || externalError}
+            </p>
+          </div>
+          <button
+            className="error-close-btn"
+            aria-label="Close error"
+            onClick={handleClear}
+          >
+            x
+          </button>
+        </section>
+      )}
       <label htmlFor="csv-upload-input" className=" global-btn primary-btn upload-label">
         {loading ? 'Processing...' : 'Choose a .csv file to upload'}
       </label>
-      
+
       {tempData.length > 0 && (
         <div className="upload-preview-box">
           <p><strong>{tempData.length}</strong> rows ready to upload.</p>
@@ -123,8 +152,6 @@ const CSVUploader = ({ onDataParsed }) => {
           </button>
         </div>
       )}
-      
-      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 };
