@@ -48,7 +48,10 @@ const CSVUploader = ({ onDataParsed, externalError, clearExternalError }) => {
   // 'localError' specifically for file-parsing issues
   const [localError, setLocalError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [lastUploadCount, setLastUploadCount] = useState(0);
   const fileInputRef = useRef(null);
+  const count = tempData.length // Captures the number of uploaded csv files.
 
   const handleClear = () => {
     setLocalError(null);
@@ -64,7 +67,7 @@ const CSVUploader = ({ onDataParsed, externalError, clearExternalError }) => {
     if (clearExternalError) clearExternalError();
 
     if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
-      setError("Please upload a valid .csv file.");
+      setLocalError("Please upload a valid .csv file.");
       return;
     }
 
@@ -88,36 +91,68 @@ const CSVUploader = ({ onDataParsed, externalError, clearExternalError }) => {
     reader.readAsText(file);
   };
 
+  // SECTION: DATABASE COMMUNICATION
+  // This function takes our verified "tempData" and attempts to push it to Supabase.
   const handleUpload = async () => {
     setLoading(true);
-    // Clear local error because we are now attempting the database move
-    setLocalError(null);
+    setUploadSuccess(false); // Reset success state for the new attempt
+    setLocalError(null); // Clear any previous "Wrong File Type" errors
 
     try {
+      // Capture the count BEFORE clearing tempData
+      const rowCount = tempData.length
+      setLastUploadCount(count);
+      // 1. We MUST await the database operation
       await onDataParsed(tempData);
-      // If the line above succeeds, clear the preview
-      setTempData([]);
+
+      // 2. CRITICAL CHECK: Ensure onDataParsed THROWS the error.
+      setUploadSuccess(true);
+      setTempData([]); // Clear the staging area
       if (fileInputRef.current) fileInputRef.current.value = "";
+
+      // Auto-hide success message after 5 seconds
+      setTimeout(() => {
+        setUploadSuccess(false);
+        setLastUploadCount(0); // Reset count after the banner fades
+       }, 5000);
+
     } catch (err) {
-      /* Professional Note: We leave 'setError' out here. The 'useAssets' hook will catch the Supabase error and pass it back to us via the 'externalError' prop. 
+      /* ERROR PATH
+          If we are here, (onDataParsed) threw an error.
+          We explicitly make sure uploadSuccess is false. 
       */
+      setUploadSuccess(false); // Explicitly ensure success is false on error
+      console.error("Database rejected the upload:", err);
     } finally {
-      setLoading(false);
+      setLoading(false); // Stop the "Processing..." spinner
     }
   };
 
   return (
     <div className="csv-uploader-container">
-      <input
-        type="file"
-        accept=".csv"
-        onChange={handleFileChange}
-        ref={fileInputRef}
-        className="hidden-file-input"
-        id="csv-upload-input"
-      />
+      {/* 1. Notifications Area */}
+      {/* SUCCESS MESSAGE:
+       Check both the success state AND ensure no errors are blocking it 
+      */}
+      {uploadSuccess && !externalError && !localError && (
+        <section className="success-message-box" aria-live="assertive">
+          <div className="error-content">
+            <span className="error-icon" aria-hidden="true">✅</span>
+            <p>
+              {lastUploadCount} Assets successfully imported!
+            </p>
+          </div>
+          <button
+            className="error-close-btn"
+            aria-label="Close error"
+            onClick={handleClear}
+          >
+            x
+          </button>
+        </section>
+      )}
 
-      {/* ERROR DISPLAY:
+      {/* ERROR MESSAGE:
     This logic shows either a local fiile error OR the database error.
     */}
       {(localError || externalError) && (
@@ -137,13 +172,29 @@ const CSVUploader = ({ onDataParsed, externalError, clearExternalError }) => {
           </button>
         </section>
       )}
-      <label htmlFor="csv-upload-input" className=" global-btn primary-btn upload-label">
-        {loading ? 'Processing...' : 'Choose a .csv file to upload'}
-      </label>
 
-      {tempData.length > 0 && (
+      {/* 2. Upload Action Area */}
+      {/* If we aren't showing a success message, show the button */}
+      {!uploadSuccess && (
+        <>
+        <input
+        type="file"
+        id="csv-upload-input"
+        className="hidden-file-input"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept=".csv"
+      />
+      <label htmlFor="csv-upload-input" className={`global-btn primary-btn upload-label ${tempData.length > 0 ? 'secondary-btn' : 'primary-btn'}`}>
+        {loading ? 'Processing...' : tempData.length > 0 ? 'Change File' : 'Choose a .csv file to upload'}
+      </label>
+      </>
+      )}
+
+      {/* THE PREVIEW & CONFIRM SECTION */}
+      {tempData.length > 0 && !uploadSuccess && (
         <div className="upload-preview-box">
-          <p><strong>{tempData.length}</strong> rows ready to upload.</p>
+          <p className='preview-text'><strong>{tempData.length}</strong> rows ready to upload.</p>
           <button className="global-btn primary-btn confirm-btn" onClick={handleUpload} disabled={loading}>
             {loading ? 'Uploading...' : 'Confirm & Upload'}
           </button>

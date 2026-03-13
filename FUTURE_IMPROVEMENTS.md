@@ -1,5 +1,26 @@
 # Improvements for Future Iterations
 
+## App Architecture 
+
+### Switching from props to React Context
+
+ - Should be done as the app grows in size
+ 
+#### Props
+
+- Simple
+- Predictable
+- Easy to debug
+- Perfect for small/medium apps
+- Zero magic
+
+#### React Context
+
+- Used in enterprise apps
+- Avoids passing props through many layers
+- Lets multiple components share the same state
+- Cleaner architecture for large systems
+
 ## 🔎 Filtering and Search Functionality/Design
 
 - PropTypes or TypeScript:	
@@ -27,6 +48,7 @@
 # CSV File Exporting for Financial Team
 - Adding a "Download Report" button
 - This functionality should align with the specific needs of the department and finance teams 
+- **Granular Data Validation:** Implement row-level error reporting to identify specific line numbers and Serial Numbers causing database conflicts, allowing users to fix large CSV files.
 
 ## Editing 
 - Add inline/input errors when a user attempts to send an empty field in edit modal.

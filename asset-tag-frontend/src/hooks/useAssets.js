@@ -12,26 +12,23 @@ This is a custom React hook that manages asset data from Supabase.
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 
-export async function fetchAssets() {
-  const { data, error } = await supabase
-    .from('assets')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error) throw error;
-  return data;
-}
-
 function useAssets() {
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // This funciton fetches data and CALLS setAssets to refresh the UI
   const loadData = async () => {
     setLoading(true);
     try {
-      const data = await fetchAssets();
-      setAssets(data);
+      const { data, error: fetchError } = await supabase
+      .from('assets')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+      if (fetchError) throw fetchError;
+
+      setAssets(data); // This is the trigger for the UI refresh
       setError(null);
     } catch (err) {
       console.error('Error fetching assets:', err);
@@ -41,15 +38,21 @@ function useAssets() {
     }
   };
 
+  // Insert a single asset
   const addAsset = async (newAsset) => {
     const { error: insError } = await supabase.from('assets').insert([newAsset]);
     if (insError) return false;
+
+    // Refresh from DB after insert
     await loadData();
     return true;
   };
 
+  // Bulk upload or update assets from CSV
   const bulkUpsertAssets = async (csvData) => {
     setLoading(true);
+
+    // Maps alternate CSV column names to DB column names
     const aliasMap = {
       'at': 'asset_tag', 'tag': 'asset_tag', 'sn': 'serial_number',
       'dept': 'department', 'purchase request': 'pr', 'purchase_order': 'po',
@@ -58,18 +61,20 @@ function useAssets() {
 
     const validColumns = ['asset_tag', 'serial_number', 'model', 'status', 'department', 'pr', 'po', 'notes'];
     
+    // Normalize CSV keys -> DB column names
     const mappedData = csvData.map(row => {
       const newRow = {};
       Object.keys(row).forEach(key => {
         const cleanKey = key.toLowerCase().trim();
         const targetKey = aliasMap[cleanKey] || cleanKey;
-        if (validColumns.includes(targetKey)) {
-          newRow[targetKey] = row[key];
-        } 
+
+        if (validColumns.includes(targetKey)) 
+          newRow[targetKey] = row[key];  
       });
       return newRow;
     });
 
+    // Perform upsert
     const { error: upError } = await supabase
       .from('assets')
       .upsert(mappedData, { onConflict: 'asset_tag' });
@@ -82,49 +87,73 @@ function useAssets() {
       } else {
         setError(`Upload failed: ${upError.message}`);
       }
-    } else {
-      console.log("UPSERT_SUCCESSFUL");
+      // CRITICAL: We throw the error so CSVUploader knows the upload failed
+
+      throw upError; // Important: tells CSVUploader the upload failed
+    } 
+
+    console.log("UPSERT_SUCCESSFUL");
+
       // Update local state so UI updates instantly
       setAssets(prevAssets => {
         const incomingMap = new Map(mappedData.map(item => [item.asset_tag, item]));
-        const filteredOldAssets = prevAssets.filter(asset => !incomingMap.has(asset.asset_tag));
-        return [...mappedData, ...filteredOldAssets];
-      });
-      setError(null);
-    }
+
+        // Keep old assets that were NOT overwritten
+        const filteredOldAssets = prevAssets.filter(asset => !incomingMap.has(asset.asset_tag)
+      );
+
+      // New/updated assets first, then old ones
+      return [...mappedData, ...filteredOldAssets];
+    });
+
+    setError(null);
     setLoading(false);
   };
 
+  // Delete a single asset
   const deleteAsset = async (id) => {
     if (!id) return;
     setLoading(true);
+
     const { error: delError } = await supabase.from('assets').delete().eq('id', id);
+
     if (delError) setError(delError.message);
     else await loadData();
+
     setLoading(false);
   };
 
+  // Delete multiple assets
   const deleteMultipleAssets = async (ids) => {
     if (!ids || ids.length === 0) return;
     setLoading(true);
+
     const { error: bulkDelError } = await supabase.from('assets').delete().in('id', ids);
+
     if (bulkDelError) setError(bulkDelError.message);
     else await loadData();
+
     setLoading(false);
   };
 
+  // Update a single asset
   const updateAsset = async (id, updatedFields) => {
     if (!id) return false;
     setLoading(true);
-    const { error: updateError } = await supabase.from('assets').update(updatedFields).eq('id', id);
+
+    const { error: updateError } = await supabase
+      .from('assets')
+      .update(updatedFields)
+      .eq('id', id);
+
     if (updateError) {
       setError(updateError.message);
       setLoading(false);
       return false;
-    } else {
-      await loadData();
-      return true;
-    }
+    } 
+
+    await loadData();
+    return true;
   };
 
   useEffect(() => {
@@ -132,10 +161,18 @@ function useAssets() {
   }, []);
 
   return {
-    assets, loading, error, setError,
-    addAsset, bulkUpsertAssets, deleteAsset,
-    deleteMultipleAssets, updateAsset, refreshAssets: loadData
+    assets, 
+    loading, 
+    error, 
+    setError,
+    addAsset,
+    bulkUpsertAssets, 
+    deleteAsset, 
+    deleteMultipleAssets, 
+    updateAsset
   };
 }
 
 export default useAssets;
+
+/* NOTE: Left off at the integration of 'loadData' into the bulkUpsertAssets workflow. The current task is to ensure that 'loadData' is called immediately after a successful Supabase upsert to update the 'assets' state, which triggers a re-render of the AssetTable automatically without requiring a page refresh. 'fetchAssets' is now aliased to 'loadData'. */

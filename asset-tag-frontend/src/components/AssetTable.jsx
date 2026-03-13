@@ -19,12 +19,20 @@ import './AssetTable.css'
  * COMPONENT: AssetTable
  * Purpose: Displays, filters, and manages the deletion of IT assets.
  */
-const AssetTable = () => {
+const AssetTable = ({
+  assets,
+  loading,
+  error,
+  setError,
+  deleteAsset,
+  deleteMultipleAssets,
+  updateAsset
+}) => {
+
   // --- 1. DATA & STATE ---
   //Brought this hook to the top level of function, which is the proper way to use hooks in React.
   const [selectedIds, setSelectedIds] = useState([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
-  const { assets, loading, error, setError, deleteAsset, deleteMultipleAssets, updateAsset } = useAssets();
   const [selectedAsset, setSelectedAsset] = useState(null); // This holds the object to be edited
 
   // Combined filter state

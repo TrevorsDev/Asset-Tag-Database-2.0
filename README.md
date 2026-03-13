@@ -83,6 +83,7 @@ The `CSVUploader` provides a robust interface for importing bulk data into the r
 - **Strict Mode Enforcement:** - Validates uniqueness across both **Asset Tags** and **Serial Numbers**. 
   - If two different Asset Tags claim the same Serial Number, the database blocks the write to prevent data corruption.
 - **Smart Error Handling:** Distinguishes between **Local Errors** (invalid file types/formatting) and **Database Errors** (duplicate records/constraint violations), providing specific feedback to the user.
+   - Prevents corruption and tells the user why an upload stopped. This is "Sufficient" for a launch because the data remains clean.
 
 ---
 

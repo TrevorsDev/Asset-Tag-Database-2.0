@@ -9,13 +9,13 @@
 import React from 'react';
 import AssetForm from './components/AssetForm';
 import AssetTable from './components/AssetTable';
-import useAssets from './hooks/useAssets';
+import useAssets from './hooks/useAssets.js';
 import CSVUploader from './components/CSVUploader/CSVUploader.jsx';
 
 function App() {
   // We only call the hook ONCE at the top
   // We get addAsset and bulkUpsertAssets for the Form and Uploader
-  const { assets, addAsset, bulkUpsertAssets, error, setError } = useAssets();
+  const { assets, loading, error, setError, addAsset, bulkUpsertAssets, deleteAsset, deleteMultipleAssets, updateAsset } = useAssets();
 
   // This function bridges the CSV data to my Supabase hook
 const handleCSVData = async (data) => {
@@ -39,7 +39,15 @@ const handleCSVData = async (data) => {
       />
       {/* AssetTable needs the 'assets' state to display rows!  */}
       
-      <AssetTable assets={assets} />
+      <AssetTable 
+      assets={assets}
+      loading={loading}
+      error={error}
+      setError={setError}
+      deleteAsset={deleteAsset}
+      deleteMultipleAssets={deleteMultipleAssets}
+      updateAsset={updateAsset}
+      />
 
     </div>
   );
