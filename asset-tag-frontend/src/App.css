@@ -27,12 +27,17 @@
     /* High contrast text for readability */
     --color-error-text: #fca5a5;
 
+    --color-success-border: rgba(16, 185, 129, 0.5);
+
+    --color-success-bg: rgba(16, 185, 129, 0.15);
+
     /* --- UI Helpers --- */
     --radius-md: 8px;
 
     /* --- TYPOGRAPHY --- */
     --color-text-main: #f8fafc;         /* Off-white (Slate 50) */
     --color-text-muted: #94a3b8;        /* Muted Blue-Gray */
+    --color-success-text: #bbf7d0;
     }
 
     .global-btn {

@@ -18,6 +18,7 @@ It does it by:
 import React, { useState, useRef } from 'react';
 import '../../App.css';
 import './CSVUploader.css'; // Import the new stylesheet
+import Alert from '../Alert';
 
 /**
  * HELPER FUNCTION: This must be defined for the component to use it.
@@ -54,9 +55,17 @@ const CSVUploader = ({ onDataParsed, externalError, clearExternalError }) => {
   const count = tempData.length // Captures the number of uploaded csv files.
 
   const handleClear = () => {
-    setLocalError(null);
-    if (clearExternalError) clearExternalError();
-  }
+    setUploadSuccess(false);     // hides success alert
+    setLastUploadCount(0);       // resets count
+    setLocalError(null);         // clears local error
+    clearExternalError();        // clears DB error
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+
+    setTempData([]); // Clear staged rows on error
+  };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
@@ -110,12 +119,6 @@ const CSVUploader = ({ onDataParsed, externalError, clearExternalError }) => {
       setTempData([]); // Clear the staging area
       if (fileInputRef.current) fileInputRef.current.value = "";
 
-      // Auto-hide success message after 5 seconds
-      setTimeout(() => {
-        setUploadSuccess(false);
-        setLastUploadCount(0); // Reset count after the banner fades
-       }, 5000);
-
     } catch (err) {
       /* ERROR PATH
           If we are here, (onDataParsed) threw an error.
@@ -123,6 +126,14 @@ const CSVUploader = ({ onDataParsed, externalError, clearExternalError }) => {
       */
       setUploadSuccess(false); // Explicitly ensure success is false on error
       console.error("Database rejected the upload:", err);
+
+      // Reset file input so user can re-upload the same file
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+
+      setTempData([]); // Clear staged rows on error
+
     } finally {
       setLoading(false); // Stop the "Processing..." spinner
     }
@@ -135,60 +146,41 @@ const CSVUploader = ({ onDataParsed, externalError, clearExternalError }) => {
        Check both the success state AND ensure no errors are blocking it 
       */}
       {uploadSuccess && !externalError && !localError && (
-        <section className="success-message-box" aria-live="assertive">
-          <div className="error-content">
-            <span className="error-icon" aria-hidden="true">✅</span>
-            <p>
-              {lastUploadCount} Assets successfully imported!
-            </p>
-          </div>
-          <button
-            className="error-close-btn"
-            aria-label="Close error"
-            onClick={handleClear}
-          >
-            x
-          </button>
-        </section>
+        <Alert
+          type="success"
+          message={`${lastUploadCount} assets successfully imported!`}
+          onClose={handleClear}
+        />
       )}
 
       {/* ERROR MESSAGE:
     This logic shows either a local fiile error OR the database error.
     */}
       {(localError || externalError) && (
-        <section className="error-message-box" aria-live="assertive">
-          <div className="error-content">
-            <span className="error-icon" aria-hidden="true">⚠️</span>
-            <p>
-              <strong>Upload Error:</strong> {localError || externalError}
-            </p>
-          </div>
-          <button
-            className="error-close-btn"
-            aria-label="Close error"
-            onClick={handleClear}
-          >
-            x
-          </button>
-        </section>
+        <Alert
+          type="error"
+          message={localError || externalError}
+          onClose={handleClear}
+        />
+
       )}
 
       {/* 2. Upload Action Area */}
       {/* If we aren't showing a success message, show the button */}
       {!uploadSuccess && (
         <>
-        <input
-        type="file"
-        id="csv-upload-input"
-        className="hidden-file-input"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        accept=".csv"
-      />
-      <label htmlFor="csv-upload-input" className={`global-btn primary-btn upload-label ${tempData.length > 0 ? 'secondary-btn' : 'primary-btn'}`}>
-        {loading ? 'Processing...' : tempData.length > 0 ? 'Change File' : 'Choose a .csv file to upload'}
-      </label>
-      </>
+          <input
+            type="file"
+            id="csv-upload-input"
+            className="hidden-file-input"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept=".csv"
+          />
+          <label htmlFor="csv-upload-input" className={`global-btn primary-btn upload-label ${tempData.length > 0 ? 'secondary-btn' : 'primary-btn'}`}>
+            {loading ? 'Processing...' : tempData.length > 0 ? 'Change File' : 'Choose a .csv file to upload'}
+          </label>
+        </>
       )}
 
       {/* THE PREVIEW & CONFIRM SECTION */}
