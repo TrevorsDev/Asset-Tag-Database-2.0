@@ -1,63 +1,119 @@
 # Improvements for Future Iterations
 
-## App Architecture 
+This document outlines deeper architectural plans, technical enhancements, and long-term improvements for the Asset Tag Database project. These items go beyond the MVP and reflect enterprise-level engineering goals.
 
-### Switching from props to React Context
+---
 
- - Should be done as the app grows in size
- 
-#### Props
+## 🏗️ App Architecture
 
-- Simple
-- Predictable
-- Easy to debug
-- Perfect for small/medium apps
-- Zero magic
-
-#### React Context
-
-- Used in enterprise apps
-- Avoids passing props through many layers
-- Lets multiple components share the same state
+### 🔄 Switch from Props to React Context
+- Reduce prop drilling as the app grows
+- Centralize shared state (filters, assets, auth)
 - Cleaner architecture for large systems
 
-## 🔎 Filtering and Search Functionality/Design
+### 🧩 Custom Hooks & Modularization
+- Move filtering logic into a dedicated custom hook
+- Extract CSV parser into its own utility module
+- Add a dedicated hook for asset CRUD operations
+- Add a hook for authentication and session management
 
-- PropTypes or TypeScript:	
-    - Adds type safety and documentation
-- Unit tests for filters:	
-    - Ensures filtering logic works as expected
-- Styling for FiltersBar:	
-    - Improves user experience
-- Clear All Filters button:	
-    - Adds usability
-- Debounced text input:	
-    - Prevents filtering on every keystroke (performance)
-- Move the "Filtered Logic" into its own separate file or custom hook (ask yourself, "which one is most efficient and enterprise standard?").
-- Empty States: When a user searches for an asset that doesnt exist, a "No asset found matching your search" message should appear. 
+### 🧪 Type Safety & Testing
+- Add PropTypes or migrate to TypeScript
+- Add unit tests for filters, CSV parsing, and form validation
+- Add integration tests for upload and edit workflows
+
+---
+
+## 🔎 Filtering & Search Enhancements
+
+- Debounced text input to improve performance
+- “Clear All Filters” button
+- Empty-state messaging (“No assets match your search”)
+- Multi-column filtering logic
+- Styling improvements for FiltersBar
+- Add column sorting (A–Z, Z–A)
+- Add pagination or infinite scroll for large datasets
+
+---
 
 ## 📝 CSV File Uploading
 
-- Add preview table before submitting CSV data.
-- Add error handling for malformed rows.
-- Add support for uploading parsed data to the backend (SQL Server).
-- Replace PapaParse with custom parser for enterprise alignment (already implemented).
-- Add a "Drag and Drop" listener and a progress bar.
-- Auto-Column Detection. React automatically queries the SQL information_schema to get a list of column names, stores that in a React state, and compares the uploading CSV against it.
+### Parsing & Validation
+- Add preview table before submitting CSV data
+- Add row-level error reporting (line numbers, conflicting serial numbers)
+- Add schema validation (required columns, type checking)
+- Auto-column detection using SQL `information_schema`
+- Add drag-and-drop upload zone
+- Add upload progress bar
 
-# CSV File Exporting for Financial Team
-- Adding a "Download Report" button
-- This functionality should align with the specific needs of the department and finance teams 
-- **Granular Data Validation:** Implement row-level error reporting to identify specific line numbers and Serial Numbers causing database conflicts, allowing users to fix large CSV files.
+### Backend Integration
+- Support uploading parsed data to SQL Server (v2.0)
+- Add server-side validation for malformed rows
+- Add audit logging for bulk imports
 
-## Editing 
-- Add inline/input errors when a user attempts to send an empty field in edit modal.
-- Only allow the "X" or "Cancel" button to close the modal if the form is "dirty" (has changes), or simply disable the "click-to-close" on the overlay to prevent data loss when accidentally clicked on.
-- Back-End (SQL): In a "High-Security" enterprise app, I should add a trigger in SQL to trim strings automatically. But for V1, handling it in the React form is the industry standard.
-- When saving an edit a green "Asset Updated Successfully" pop-up in the corner (a "Toast") should appear.
+---
 
-## 🎨 Design
-- All buttons should have one class that applies styling elements universally.
+## 📤 CSV File Exporting
 
-## MS SQL Server Migration (Version 2.0)
-- Swap my entire database from Supabase to MSSQL without changing my UI code
+- Add “Download Report” button
+- Export filtered results
+- Export full dataset
+- Support CSV and Excel formats
+- Add scheduled exports for finance teams
+
+---
+
+## ✏️ Editing & Asset Management
+
+- Inline validation for edit modal fields
+- Prevent accidental modal close when form is dirty
+- Add toast notifications (“Asset updated successfully”)
+- Add bulk delete or bulk update actions
+- Add audit logging for edits and deletes
+
+---
+
+## 🎨 UI/UX Improvements
+
+- Standardize button styles across the app
+- Add dark mode
+- Improve mobile responsiveness
+- Add loading spinners and skeleton states
+- Add empty-state illustrations or messaging
+
+---
+
+## 🛡️ Security & Authentication
+
+- Add Supabase Auth (email/password or OAuth)
+- Add role-based access control (Admin vs Read-Only)
+- Add protected routes and session persistence
+- Add password reset and email verification flows
+
+---
+
+## 🗄️ MS SQL Server Migration (Version 2.0)
+
+- Migrate database from Supabase (PostgreSQL) to MS SQL Server
+- Maintain identical UI and frontend logic
+- Update backend queries and upsert logic
+- Add stored procedures for enterprise workflows
+- Add SQL triggers for trimming and data normalization
+
+---
+
+## 📊 Reporting & Analytics
+
+- Add dashboards (assets by department, lifecycle status)
+- Add charts (Pie, Bar, Line)
+- Add exportable PDF reports
+- Add scheduled email reports
+
+---
+
+## 🧭 Deployment & Monitoring
+
+- Deploy MVP to production (Netlify, Vercel, or Supabase)
+- Add environment variable management
+- Add error boundaries for production safety
+- Add logging and monitoring (Sentry, Supabase logs)

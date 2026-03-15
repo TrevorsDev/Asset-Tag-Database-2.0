@@ -33,7 +33,8 @@ Asset_Tag_Database_2.0/
 │ │ │ ├── CSVUploader/ # CSV Import component & styles  
 │ │ │ └── (filter components coming soon) 
 │ │ ├── hooks/ 
-│ │ │ └── useAssets.js │ │ ├── utils/ 
+│ │ │ └── useAssets.js 
+│ │ ├── utils/ 
 │ │ │ └── validation.js 
 │ │ ├── supabaseClient.js 
 │ ├── .env 
@@ -46,45 +47,153 @@ Asset_Tag_Database_2.0/
 ## ✅ Current Progress
 
 ### 🔧 Backend (Supabase)
-- `assets` table created with full schema (UUIDs and Unique constraints).
-- Row-level security enabled
-- Public read access temporarily allowed
-- Seed data inserted for testing
-- Utility scripts for row counts and resets
-- **Upsert Logic:** Backend prepared to handle "Update or Insert" operations based on unique asset tags.
+- Fully implemented assets table with UUID PKs and unique constraints.
+
+- Row‑level security configured.
+
+- Seed data and utility SQL scripts included.
+
+- Upsert logic prepared for CSV imports.
+
+- Database rejects conflicting serial numbers or asset tags to maintain integrity.
 
 ### 💻 Frontend (React + Vite)
-- Supabase client configured
-- Asset data fetched and displayed in a table
-- Form built to add new assets
-- Validation and error handling implemented
-- App renders successfully in browser
+- Asset table with live Supabase data.
+
+- Asset creation form with validation.
+
+- Centralized filtering system (FiltersBar + ColumnFilter).
+
+- Fully refactored CSVUploader with:
+
+   - Custom CSV parser
+
+   - Header normalization
+
+   - Two‑stage review
+
+   - Strict validation
+
+   - Smart error handling
+
+   - Centralized reset logic
+
+   - Professional file input behavior
+
+### 🎨 UI/UX
+- Semantic HTML for accessibility.
+
+- Reusable button styles.
+
+- Reusable ```<Alert />``` component for success/error messaging.
+
+- Clean, consistent layout across components.
 
 ### ⚔️ Code Standards
 - Semantic HTML: Prioritizes the use of descriptive tags (`<section>`, `<label>`, `<p>`) over generic `<div>` nesting to improve accessibility and SEO.
 
 - **Data Management:** Custom `useAssets` hook manages fetching and bulk data operations.
 
-### ✅ FiltersBar Component
+### ✅ FiltersBar Component & ColumnFilter Abstraction
+
+#### FilterBar
 - Introduced a centralized `FiltersBar` component to manage all column filters.
 - Uses a reusable `ColumnFilter` component for both dropdown and text input filters.
 - Filters are driven by a config array for scalability and maintainability.
 
-### ✅ ColumnFilter Abstraction
-- Created a reusable `ColumnFilter` component that supports both dropdown and text input types.
-- Simplifies the UI and keeps the code DRY (Don't Repeat Yourself).
+#### ColumnFilter
+- A reusable abstraction that:
+
+   - Accepts filter type (select or text).
+
+   - Accepts dynamic options.
+
+   - Emits filter changes back to the parent.
+
+   - Keeps the code DRY and maintainable.
 
 ### ✅ CSVUploader Component
-The `CSVUploader` provides a robust interface for importing bulk data into the registry.
+The CSVUploader is a fully refactored, production‑ready bulk import tool designed for reliability, clarity, and user‑friendly error handling.
 
-- **Custom Parsing Engine:** Built using the browser's **File API** to parse thousands of rows locally without third-party library overhead.
-- **Header Mapping Layer:** Automatically translates inconsistent CSV headers (e.g., 'sn' → 'serial_number', 'dept' → 'department') into database-compliant fields.
-- **Two-Stage "Review State":** Implements an "Upload -> Confirm" workflow, allowing users to verify row counts before committing to the database.
-- **Strict Mode Enforcement:** - Validates uniqueness across both **Asset Tags** and **Serial Numbers**. 
-  - If two different Asset Tags claim the same Serial Number, the database blocks the write to prevent data corruption.
-- **Smart Error Handling:** Distinguishes between **Local Errors** (invalid file types/formatting) and **Database Errors** (duplicate records/constraint violations), providing specific feedback to the user.
-   - Prevents corruption and tells the user why an upload stopped. This is "Sufficient" for a launch because the data remains clean.
+#### Key Features
+#### 📄 Custom CSV Parsing Engine
+Built using the browser’s native FileReader API — no third‑party libraries.
 
+- Handles thousands of rows efficiently.
+
+- Skips blank lines and malformed rows.
+
+- Validates that the CSV contains both headers and data rows.
+
+#### 🧭 Header Normalization Layer
+- Automatically maps inconsistent CSV headers (e.g., sn, serial, dept, department) into database‑compliant column names. This allows non‑technical staff to upload files without strict formatting.
+
+#### 🧪 Two‑Stage Review Workflow
+- Upload CSV → Preview row count
+
+- Confirm & Upload → Commit to database
+
+- This prevents accidental imports and gives users confidence before writing to the database.
+
+#### 🛡️ Strict Data Integrity Enforcement
+- Validates uniqueness of Asset Tags and Serial Numbers.
+
+- Database rejects conflicting rows to prevent corruption.
+
+- Clear messaging explains why a row failed.
+
+#### 🎯 Smart Error Handling
+- Local Errors: invalid file type, empty CSV, malformed rows, missing headers.
+
+- Database Errors: constraint violations, duplicates, or Supabase rejections.
+
+- Errors are displayed through a unified ```<Alert />``` component.
+
+#### 🔁 Professional File Input Behavior
+The uploader now handles all edge cases cleanly:
+
+- Users can re‑select the same file after Cancel, error, or success.
+
+- File input resets automatically after every action.
+
+- No need to refresh the page to retry an upload.
+
+#### 🧹 Centralized Reset Logic
+- All resets (file input, errors, preview, success state) are handled through dedicated helper functions:
+
+   - resetFileInput()
+
+   - clearAllErrors()
+
+   - resetState()
+
+   - This reduces duplication and makes the component easier to maintain.
+
+### 🧠 Architecture & Code Quality Improvements
+#### State Management
+- All CSVUploader state transitions are now predictable and centralized.
+
+- Error states are separated into local vs external (database) for clarity.
+
+- File input resets are handled consistently across all user actions.
+
+#### UX Enhancements
+- Clear success and error alerts using a reusable ```<Alert />``` component.
+
+- “Change File” button appears only when appropriate.
+
+- Cancel button now fully resets the uploader.
+
+- Prevents users from uploading malformed or empty CSVs.
+
+#### Error Safety
+- No partial writes.
+
+- No silent failures.
+
+- No corrupted data.
+
+- Users always know what happened and why.
 ---
 
 ## 🚀 How to Run the App
@@ -101,29 +210,38 @@ The `CSVUploader` provides a robust interface for importing bulk data into the r
 
 5. Open your browser to http://localhost:5173
 
-```
-Next Steps
-✅ Connect frontend to Supabase
-✅ Display asset data in a table
-✅ Complete form to add new assets
-✅ Add form validation and error handling
-✅ Implement column-based filtering (starting with status)
-   🔲 - Styling the filters bar to match my table layout? (Next iteration)
-   🔲 - Adding a loading spinner or "No results found" message? (Next iteration)
-   🔲 - Creating a “Clear All Filters” button? (Next iteration)
-✅ Add CSV import support (with Upsert mapping)
-✅ Add edit/update and delete functionality
-🔲 Add authentication and secure access
-🔲 Deploy MVP and test full workflow
-📝 Notes
-
-- This project is being developed as a learning tool to understand full-stack development, database design, and frontend/backend integration.
-- Supabase is used to simplify backend setup while maintaining SQL control.
--React is used to build a responsive, modern frontend with real-time data interaction.
--Except for the serial number ("sn" or "serial_number") and department ("dept" or "department") headers, the CSV headers must match the table columns exactly for import. 
-- The Mapping Layer in useAssets.js allows for flexible CSV header naming, increasing user-friendliness for non-technical staff.
--The frontend is built using React with Vite for fast development and hot module reloading.
-```
 ---
+## 🚀 Next Steps
+
+### 🔐 Authentication & Security
+- Add Supabase Auth (email/password or OAuth)
+- Add protected routes and session handling
+- Add role-based access control (Admin vs Read-Only)
+
+### 🧭 Filtering Enhancements
+- Style the FiltersBar to match the asset table
+- Add a “Clear All Filters” button
+- Add loading and empty-state messaging
+- Add multi-column filtering (e.g., Status + Department)
+
+### 📄 CSV Import Enhancements
+- Add optional preview table (first 5–10 rows)
+- Add drag-and-drop upload zone
+- Add CSV export functionality
+- Add schema validation for required columns
+
+### 🛠 Asset Management
+- Add inline editing improvements
+- Add bulk delete or bulk update actions
+- Add audit logging (who changed what and when)
+
+### 🌐 Deployment
+- Deploy MVP to production
+- Configure environment variables for production
+- Test full workflow with real users
+
+---
+For deeper architectural plans and long-term enhancements, see  
+📘 **[Future Improvements](./FUTURE_IMPROVEMENTS.md)**
 
 
