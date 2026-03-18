@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Check } from 'lucide-react';
 import '../App.css'
-import './editModal.css';
+import './AssetModal.css';
 
 /**
  * COMPONENT: EditAssetModal
@@ -25,7 +25,7 @@ const getErrorMessage = (errorText) => {
     return key ? errorMapping[key] : errorText;
 };
 
-const EditAssetModal = ({ asset, isOpen, onClose, onSave, error }) => {
+const AssetModal = ({ asset, isOpen, onClose, onSave, error }) => {
     //1. LOCAL STATE: We copy the asset data into local state.
     // This allows the user to type without immediately changing the main table data.
     console.log("REAL TIME MODAL DATA:", asset);
@@ -65,6 +65,8 @@ const EditAssetModal = ({ asset, isOpen, onClose, onSave, error }) => {
             acc[key] = typeof value === 'string' ? value.trim() : value;
             return acc;
         }, {});
+
+        onSave(asset.id, cleanedData); // triggers addAsset() in Add mode and updateAsset() in Edit mode
 
         // 2. VALIDATION: Define which fields MUST be filled (Professional Standard)
         // We don't check 'po' or 'pr' because they might be empty in real life
@@ -122,7 +124,7 @@ const EditAssetModal = ({ asset, isOpen, onClose, onSave, error }) => {
 
                     <div className="asset-modal__grid">
                         {/* We map through keys to keep the code DRY */}
-                        {['asset_tag', 'serial_number', 'model', 'status', 'department', 'pr', 'po'].map((field) => (
+                        {['asset_tag', 'serial_number', 'model', 'status', 'department', 'pr', 'po', 'notes'].map((field) => (
                             <div className="asset-modal__group" key={field}>
                                 <label className="asset-modal__label" htmlFor={field}>{field.replace('_', ' ').toUpperCase()}
                                 </label>
@@ -139,18 +141,18 @@ const EditAssetModal = ({ asset, isOpen, onClose, onSave, error }) => {
                     </div>
 
                     <div className="asset-modal__actions">
+                        <button type="submit" className="global-btn primary-btn">
+                            Save Changes
+                        </button>
+
                         <button type="button" className="global-btn secondary-btn" onClick={onClose}>
                             Cancel
                         </button>
-                        <button type="submit" className="global-btn primary-btn">
-                            <Check /> Save Changes
-                        </button>
                     </div>
-
                 </form>
             </div>
         </div>
     );
 };
 
-export default EditAssetModal;
+export default AssetModal;
