@@ -39,12 +39,15 @@ This document outlines deeper architectural plans, technical enhancements, and l
 ## 📝 CSV File Uploading
 
 ### Parsing & Validation
-- Add preview table before submitting CSV data
+- Add preview table (first 5-10 rows) before submitting CSV data
 - Add row-level error reporting (line numbers, conflicting serial numbers)
 - Add schema validation (required columns, type checking)
 - Auto-column detection using SQL `information_schema`
 - Add drag-and-drop upload zone
 - Add upload progress bar
+- Better empty-state messaging
+    - "No file selected"
+    - "Upload a CSV to begin"
 
 ### Backend Integration
 - Support uploading parsed data to SQL Server (v2.0)

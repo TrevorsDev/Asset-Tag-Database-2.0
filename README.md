@@ -62,7 +62,7 @@ Asset_Tag_Database_2.0/
 
 - Asset creation form with validation.
 
-- Centralized filtering system (FiltersBar + ColumnFilter).
+- Centralized filtering system using a single search bar.
 
 - Fully refactored CSVUploader with:
 
@@ -94,28 +94,10 @@ Asset_Tag_Database_2.0/
 
 - **Data Management:** Custom `useAssets` hook manages fetching and bulk data operations.
 
-### ✅ FiltersBar Component & ColumnFilter Abstraction
-
-#### FilterBar
-- Introduced a centralized `FiltersBar` component to manage all column filters.
-- Uses a reusable `ColumnFilter` component for both dropdown and text input filters.
-- Filters are driven by a config array for scalability and maintainability.
-
-#### ColumnFilter
-- A reusable abstraction that:
-
-   - Accepts filter type (select or text).
-
-   - Accepts dynamic options.
-
-   - Emits filter changes back to the parent.
-
-   - Keeps the code DRY and maintainable.
-
-### ✅ CSVUploader Component
+#### Key Features
+#### ✅ CSVUploader Component
 The CSVUploader is a fully refactored, production‑ready bulk import tool designed for reliability, clarity, and user‑friendly error handling.
 
-#### Key Features
 #### 📄 Custom CSV Parsing Engine
 Built using the browser’s native FileReader API — no third‑party libraries.
 
@@ -177,6 +159,54 @@ The uploader now handles all edge cases cleanly:
 
 - File input resets are handled consistently across all user actions.
 
+## 🗂️ Selection Mode & Bulk Delete Architecture
+
+The asset table now includes a scalable, enterprise‑ready bulk‑delete system built on centralized state management and clean component boundaries.
+
+### 🔑 Key Architecture
+
+- **Selection state lives in `App.jsx`**  
+  `selectedIds` and `isSelectionMode` are now top‑level state, allowing both the table and toolbar to react to selection changes.
+
+- **AssetTable is now a pure UI component**  
+  It no longer manages global state or errors. It:
+  - Renders rows  
+  - Displays checkboxes when selection mode is active  
+  - Emits selection events upward  
+
+- **Toolbar is selection‑aware**  
+  It receives:
+  - `selectedCount`  
+  - `isSelectionMode`  
+  - `setIsSelectionMode`  
+  - `onDeleteSelected`  
+
+  This enables contextual actions like:
+  - “Delete X Assets”
+  - “Cancel Selection”
+
+- **Bulk delete logic is centralized**  
+  `handleBulkDelete()` now lives in `App.jsx` and:
+  - Confirms the action  
+  - Calls `deleteMultipleAssets()`  
+  - Clears selection  
+  - Exits selection mode  
+
+### 🧼 Cleanup & Refactor Notes
+
+- Removed legacy column‑filtering system (`FiltersBar`, `ColumnFilter`, and all filter state).
+- Removed unused `error` and `setError` props from `AssetTable`.
+- Removed local selection state from `AssetTable`.
+- Prepared the table for the upcoming **hover‑to‑activate selection mode** and **slide‑in checkbox column**.
+
+## 🔮 Upcoming UX Enhancements (Planned)
+
+- Hover‑activated selection handles on each row  
+- Slide‑in checkbox column with smooth animation  
+- A contextual action banner between toolbar and table  
+- “Delete X Assets” and “Cancel Selection” actions  
+- Polished row‑shift animations  
+
 #### UX Enhancements
 - Clear success and error alerts using a reusable ```<Alert />``` component.
 
@@ -217,12 +247,6 @@ The uploader now handles all edge cases cleanly:
 - Add Supabase Auth (email/password or OAuth)
 - Add protected routes and session handling
 - Add role-based access control (Admin vs Read-Only)
-
-### 🧭 Filtering Enhancements
-- Style the FiltersBar to match the asset table
-- Add a “Clear All Filters” button
-- Add loading and empty-state messaging
-- Add multi-column filtering (e.g., Status + Department)
 
 ### 📄 CSV Import Enhancements
 - Add optional preview table (first 5–10 rows)
