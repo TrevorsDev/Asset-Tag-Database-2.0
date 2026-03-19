@@ -2,42 +2,52 @@
 /* In a professional architecture, we categorize feedback colors into Base (the core color), Surface (the translucent background), and Border. */
 
 @layer base {
-    :root { 
-    /* --- SURFACE & BACKGROUNDS --- */
-    --color-bg-main: #0f172a;           /* Deep Navy/Slate */
-    --color-bg-surface: #1e293b;        /* Lighter Slate for cards/modals */
-    --color-border-subtle: #334155;     /* Soft slate border */
-    
-    /* --- BRAND & ACTION COLORS --- */
-    --color-action-primary: #10b981;     /* Emerald 500 */
-    --color-action-hover: #059669;       /* Emerald 600 */
+    :root {
+        /* --- SURFACE & BACKGROUNDS --- */
+        --color-bg-main: #0f172a;
+        /* Deep Navy/Slate */
+        --color-bg-surface: #1e293b;
+        /* Lighter Slate for cards/modals */
+        --color-border-subtle: #334155;
+        /* Soft slate border */
 
-    /* Accesnts: For Edits */
-    --color-action-edit: #3b82f6;       /* Vivid Blue */
+        /* --- BRAND & ACTION COLORS --- */
+        --color-action-primary: #10b981;
+        /* Emerald 500 */
+        --color-action-hover: #059669;
+        /* Emerald 600 */
 
-    /* --- STATUS & FEEDBACK ---*/
-    --color-status-danger: #ef4444;     /* Rose Red */
-    --color-status-danger-max: #f59e0b;    /* Amber */
+        /* Accesnts: For Edits */
+        --color-action-edit: #3b82f6;
+        /* Vivid Blue */
 
-    /* Error Variants */
-    /* Using a 15% opacity version of the red for the background */
-    --color-error-bg: rgba(239, 68, 68, 0.15);
-    /* A slightly brighter red for the border to make it "pop" */
-    --color-error-border: rgba(239, 68, 68, 0.5);
-    /* High contrast text for readability */
-    --color-error-text: #fca5a5;
+        /* --- STATUS & FEEDBACK ---*/
+        --color-status-danger: #ef4444;
+        /* Rose Red */
+        --color-status-danger-max: #f59e0b;
+        /* Amber */
 
-    --color-success-border: rgba(16, 185, 129, 0.5);
+        /* Error Variants */
+        /* Using a 15% opacity version of the red for the background */
+        --color-error-bg: rgba(239, 68, 68, 0.15);
+        /* A slightly brighter red for the border to make it "pop" */
+        --color-error-border: rgba(239, 68, 68, 0.5);
+        /* High contrast text for readability */
+        --color-error-text: #fca5a5;
 
-    --color-success-bg: rgba(16, 185, 129, 0.15);
+        --color-success-border: rgba(16, 185, 129, 0.5);
 
-    /* --- UI Helpers --- */
-    --radius-md: 8px;
+        --color-success-bg: rgba(16, 185, 129, 0.15);
 
-    /* --- TYPOGRAPHY --- */
-    --color-text-main: #f8fafc;         /* Off-white (Slate 50) */
-    --color-text-muted: #94a3b8;        /* Muted Blue-Gray */
-    --color-success-text: #bbf7d0;
+        /* --- UI Helpers --- */
+        --radius-md: 8px;
+
+        /* --- TYPOGRAPHY --- */
+        --color-text-main: #f8fafc;
+        /* Off-white (Slate 50) */
+        --color-text-muted: #94a3b8;
+        /* Muted Blue-Gray */
+        --color-success-text: #bbf7d0;
     }
 
     .global-btn {
@@ -55,7 +65,7 @@
         padding: 0.75rem 1rem;
         font-size: 1rem;
         font-weight: var(--font-weight-medium);
-        color:var(--color-text-main);
+        color: var(--color-text-main);
         background-color: var(--color-action-primary);
     }
 
@@ -80,19 +90,37 @@
         outline: none;
         border: none;
     }
-    
-    .global-btn:focus-visible  {
-    outline-offset: 1px;
+
+    .global-btn:focus-visible {
+        outline-offset: 1px;
     }
 
-/* Utility layer  */
-@layer utility {
-    .u-flex-center {
-        display: table;
-        margin-left: auto;
-        margin-right: auto; 
+    /* Utility layer  */
+    @layer utility {
+        .u-center-block {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .u-flex-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .u-text-center {
+            text-align: center;
+        }
+
+        .u-mx-auto {
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .u-hidden {
+            display: none;
+        }
     }
-}
 
 }
 

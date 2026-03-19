@@ -6,15 +6,11 @@
    ========================================================================== */
 .asset-table {
     width: 100%;
-    table-layout: fixed; /* The "Wooden Frame" */
+    table-layout: fixed;
     border-collapse: collapse;
     background: var(--color-bg-surface);
     color: var(--color-text-main);
-    border-radius: 8px;
-    overflow: hidden; /* Clips the corners of the rows to the border-radius */
 } 
-
-/* ELEMENTS: Shared Cell Properties */
 
 /* ELEMENT: Header Specifics */
 .asset-table__header {
@@ -34,16 +30,6 @@
     border-bottom: 1px solid var(--color-border-subtle);
     font-size: 0.875rem;
 }
-
-/* MODIFIERS: Anchor Widths (Applied to <th>) */
-.asset-table__header--checkbox { width: 3.5rem; text-align: center; }
-.asset-table__header--status   { width: 15%; }
-/* Note: We no longer need a dedicated "Actions" header width because 
-   actions are now nested in the last data column. */
-
-/* MODIFIERS: Alignment & State */
-.asset-table__cell--center { text-align: center; }
-.asset-table__cell--right  { text-align: right; }
 
 .asset-table__row {
     transition: background-color 0.2s ease;
@@ -132,9 +118,58 @@
     outline: 1px solid var(--color-status-danger);
 }
 
+/* /* ==========================================================================
+   STABLE CHECKBOX COLUMN (Gmail-style)
+   ========================================================================== */
+
+/* The column itself is fixed width */
+td.checkbox-col,
+th.checkbox-col {
+  width: 24px ;
+  padding: 0 ;
+  overflow: visible;
+  position: relative;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+/* Wrapper that slides the checkbox in/out */
+.checkbox-wrapper {
+  position: absolute;
+  left: -24px; /* hidden to the left */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  transition: left 0.18s ease, opacity 0.18s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Hover mode: slide in */
+/* Selection mode: always visible */
+.checkbox-wrapper--hover,
+.checkbox-wrapper--active {
+  left: 0; /* slide into the cell */
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Checkbox styling */
+.checkbox-wrapper input {
+  margin: 0 0 0 13px;
+  padding:0;
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+
 /* ==========================================================================
    MISC / UTILITIES
    ========================================================================== */
+   
 .asset-table__controls {
     display: flex;
     gap: 1rem;

@@ -17,6 +17,9 @@ This document outlines deeper architectural plans, technical enhancements, and l
 - Add a dedicated hook for asset CRUD operations
 - Add a hook for authentication and session management
 
+### ⎍ Data Table
+- Migrate the AssetTable from a traditional HTML ``` <table>``` to a CSS Grid–driven layout to unlock modern interaction patterns (hover‑activated controls, animated columns, responsive resizing), improve long‑term scalability, and enable virtualization for large datasets.
+
 ### 🧪 Type Safety & Testing
 - Add PropTypes or migrate to TypeScript
 - Add unit tests for filters, CSV parsing, and form validation
@@ -24,14 +27,11 @@ This document outlines deeper architectural plans, technical enhancements, and l
 
 ---
 
-## 🔎 Filtering & Search Enhancements
+## 🔎 Search Enhancements
 
+- Implement server‑side search with row virtualization (e.g., react‑window or TanStack Virtual) to ensure sub‑millisecond filtering and smooth rendering of large datasets (15k+ assets) while maintaining responsive UI performance.
 - Debounced text input to improve performance
-- “Clear All Filters” button
 - Empty-state messaging (“No assets match your search”)
-- Multi-column filtering logic
-- Styling improvements for FiltersBar
-- Add column sorting (A–Z, Z–A)
 - Add pagination or infinite scroll for large datasets
 
 ---

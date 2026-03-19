@@ -1,0 +1,28 @@
+/* ==========================================================================
+   BULK DELETE BANNER
+   ========================================================================== */
+
+.bulk-delete-banner {
+    position: relative;
+    z-index: 1;
+    /* sits behind the toolbar */
+    background: var(--color-border-subtle);
+    padding: 2px 40px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

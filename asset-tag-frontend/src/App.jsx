@@ -14,6 +14,7 @@ import AssetModal from './components/AssetModal.jsx'
 import CSVUploader from './components/CSVUploader/CSVUploader.jsx';
 
 import useAssets from './hooks/useAssets.js';
+import BulkDeleteBanner from './components/BulkDeleteBanner.jsx';
 
 function App() {
   // --- 1. GLOAL DATA FROM SUPABASE HOOK ---
@@ -123,6 +124,17 @@ function App() {
           onDataParsed={handleCSVData}
           externalError={error}
           clearExternalError={() => setError(null)}
+        />
+      )}
+
+      {isSelectionMode && (
+        <BulkDeleteBanner
+          selectedCount={selectedIds.length}
+          onDeleteSelected={handleBulkDelete}
+          onCancel={() => {
+            setIsSelectionMode(false);
+            setSelectedIds([]);
+          }}
         />
       )}
 

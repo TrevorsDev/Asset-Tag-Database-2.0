@@ -11,6 +11,7 @@ This component displays a table of asset data.
 import React, { useState } from 'react';
 import { Trash2, Pencil } from 'lucide-react'; // Imports Trash icon
 import './AssetTable.css'
+import '../App.css'
 
 /*
  * COMPONENT: AssetTable
@@ -44,6 +45,8 @@ const AssetTable = ({
     );
   };
 
+  const [hoveredRowId, setHoveredRowId] = useState(null);
+
   //--- 3. RENDER HELPER (Prevents clutter in return statement) ---
   // Simple Error/Loading UI
   if (loading && assets.length === 0) return <p>Loading assets...</p>;
@@ -52,84 +55,75 @@ const AssetTable = ({
   return (
     <div className="asset-table-container">
 
-      {/* Selection Mode Controls */}
-      <div className="asset-table__controls">
-        <button
-          className={`global-btn secondary-btn ${isSelectionMode ? 'active' : ''}`}
-          onClick={() => {
-            setIsSelectionMode(!isSelectionMode);
-            setSelectedIds([]);
-          }}
-        >
-          {isSelectionMode ? 'Cancel Selection' : 'Delete Assets'}
-        </button>
-
-        {isSelectionMode && selectedIds.length > 0 && (
-          <button className="global-btn secondary-btn bulk-delete-btn" onClick={handleBulkDelete}>
-            Delete {selectedIds.length} Selected
-          </button>
-        )}
-      </div>
-
-      <table className="asset-table u-flex-center">
-        <thead className="asset-table__header ">
+      <table className="asset-table">
+        <thead className="asset-table__header">
           <tr>
-            {/* Checkbox column only shows in selection mode */}
-            {isSelectionMode && <th className=" asset-table__header--checkbox checkbox-col"></th>}
-            <th className="asset-table__header asset-table__header--tag" title="Asset Tag">Asset Tag</th>
-            <th className="asset-table__header" title="Serial Number">Serial Number</th>
-            <th className="asset-table__header" title="Model">Model</th>
-            <th className="asset-table__header asset-table__header--status" title="Status">Status</th>
-            <th className="asset-table__header" title="Department">Department</th>
-            <th className="asset-table__header" title="Purchase Request">Purchase Request</th>
-            <th className="asset-table__header" title="Purchase Order">Purchase Order</th>
-            <th className="asset-table__header" title="Notes">Notes</th>
+            <th className="checkbox-col"></th>
+            <th className="asset-table__header u-text-center">Asset Tag</th>
+            <th className="asset-table__header u-text-center">Serial Number</th>
+            <th className="asset-table__header u-text-center">Model</th>
+            <th className="asset-table__header u-text-center">Status</th>
+            <th className="asset-table__header u-text-center">Department</th>
+            <th className="asset-table__header u-text-center">Purchase Request</th>
+            <th className="asset-table__header u-text-center">Purchase Order</th>
+            <th className="asset-table__header u-text-center">Notes</th>
           </tr>
         </thead>
+
         <tbody>
-          {/* Loop through the filtered assets and render each row */}
           {assets.map((asset) => (
             <tr
               key={asset.id}
-              className={`asset-table__row ${selectedIds.includes(asset.id) ? 'asset-table__row--selected' : ''}`}
+              className={`asset-table__row ${selectedIds.includes(asset.id) ? 'asset-table__row--selected' : ''
+                }`}
+              onMouseEnter={() => !isSelectionMode && setHoveredRowId(asset.id)}
+              onMouseLeave={() => !isSelectionMode && setHoveredRowId(null)}
             >
-              {isSelectionMode && (
-                <td className="asset-table__cell--center checkbox-col">
+              {/* Checkbox cell logic */}
+              <td className="checkbox-col">
+                <div
+                  className={
+                    isSelectionMode
+                      ? "checkbox-wrapper checkbox-wrapper--active"
+                      : hoveredRowId === asset.id
+                        ? "checkbox-wrapper checkbox-wrapper--hover"
+                        : "checkbox-wrapper"
+                  }
+                >
                   <input
                     type="checkbox"
                     checked={selectedIds.includes(asset.id)}
-                    onChange={() => toggleSelection(asset.id)}
+                    onChange={() => {
+                      toggleSelection(asset.id);
+                      if (!isSelectionMode) setIsSelectionMode(true);
+                    }}
                   />
-                </td>
-              )}
-              <td className="asset-table__cell asset-table__cell--center" title={asset.asset_tag}>{asset.asset_tag}</td>
-              <td className="asset-table__cell asset-table__cell--center" title={asset.serial_number}>{asset.serial_number}</td>
-              <td className="asset-table__cell asset-table__cell--center" title={asset.model}>{asset.model}</td>
-              <td className="asset-table__cell asset-table__cell--center" title={asset.status}>{asset.status}</td>
-              <td className="asset-table__cell asset-table__cell--center" title={asset.department}>{asset.department}</td>
-              <td className="asset-table__cell asset-table__cell--center" title={asset.pr}>{asset.pr}</td>
-              <td className="asset-table__cell asset-table__cell--center" title={asset.po}>{asset.po}</td>{/* The text wrapper is key here */}
+                </div>
+              </td>
 
-              <td className="asset-table__cell asset-table__cell--center asset-table__cell--last" title={asset.notes}>
-                <span className="asset-table__cell-text" title={asset.notes}>
-                  {asset.notes}
-                </span>
 
-                {/* The Delete Button itself */}
+              {/* Data cells */}
+              <td className="asset-table__cell u-text-center">{asset.asset_tag}</td>
+              <td className="asset-table__cell u-text-center">{asset.serial_number}</td>
+              <td className="asset-table__cell u-text-center">{asset.model}</td>
+              <td className="asset-table__cell u-text-center">{asset.status}</td>
+              <td className="asset-table__cell u-text-center">{asset.department}</td>
+              <td className="asset-table__cell u-text-center">{asset.pr}</td>
+              <td className="asset-table__cell u-text-center">{asset.po}</td>
+              <td className="asset-table__cell asset-table__cell--last">
+                <span className="asset-table__cell-text">{asset.notes}</span>
+
                 <div className="asset-table__actions-container">
                   <button
                     className="icon-button icon-button--trash"
                     onClick={() => handleDeleteClick(asset.id, asset.asset_tag)}
-                    aria-label={`Delete asset ${asset.asset_tag}`}
-                    title="Delete Asset"
                   >
-                    <Trash2 /> {/* The Icon Component */}
+                    <Trash2 />
                   </button>
-                  {/* The edit button itself */}
+
                   <button
                     className="icon-button icon-button--edit"
                     onClick={() => onEdit(asset)}
-                    aria-label={`Edit asset ${asset.asset_tag}`}
                   >
                     <Pencil />
                   </button>

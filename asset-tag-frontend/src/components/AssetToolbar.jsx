@@ -1,4 +1,5 @@
 import SearchBar from './SearchBar';
+import './AssetToolbar.css';
 
 function AssetToolbar({ 
     onAddAsset, 
@@ -6,8 +7,6 @@ function AssetToolbar({
     searchQuery, 
     setSearchQuery, 
     selectedCount, 
-    isSelectionMode,
-    setIsSelectionMode,
     onDeleteSelected 
 }) {
     return (
@@ -32,12 +31,6 @@ function AssetToolbar({
                     value={searchQuery}
                     onChange={setSearchQuery}
                 />
-                
-                {selectedCount > 0 && (
-                    <button onClick={onDeleteSelected}>
-                        Delete {selectedCount} Assets
-                    </button>
-                )}
             </div>
         </div>
     )
