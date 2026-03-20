@@ -32,10 +32,6 @@
     font-size: 0.875rem;
 }
 
-.asset-table__row {
-    /* transition: background-color 0.2s ease; */
-}
-
 .asset-table__row:hover {
     background-color: #314054;
     /* Subtle glass effect */

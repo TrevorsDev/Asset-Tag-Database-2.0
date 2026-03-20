@@ -22,9 +22,9 @@ function useAssets() {
     setLoading(true);
     try {
       const { data, error: fetchError } = await supabase
-        .from('assets')
-        .select('*')
-        .order('created_at', { ascending: false });
+      .from('assets')
+      .select('*')
+      .order('created_at', { ascending: false });
 
       if (fetchError) throw fetchError;
 
@@ -50,83 +50,34 @@ function useAssets() {
 
   // Bulk upload or update assets from CSV
   const bulkUpsertAssets = async (csvData) => {
-    console.log("CSV KEYS:", Object.keys(csvData[0]));
-
     setLoading(true);
 
     // Maps alternate CSV column names to DB column names
     const aliasMap = {
-      // Asset Tag
-      'asset tag': 'asset_tag',
-      'asset_tag': 'asset_tag',
-      'tag': 'asset_tag',
-      'at': 'asset_tag',
-
-      // Serial Number
-      'serial number': 'serial_number',
-      'serial_number': 'serial_number',
-      'sn': 'serial_number',
-
-      // Model
-      'model': 'model',
-
-      // Status
-      'status': 'status',
-
-      // Department
-      'department': 'department',
-      'dept': 'department',
-
-      // Purchase Request
-      'purchase request': 'pr',
-      'purchase_request': 'pr',
-      'pr': 'pr',
-
-      // Purchase Order
-      'purchase order': 'po',
-      'purchase_order': 'po',
-      'po': 'po',
-
-      // Notes
-      'notes': 'notes',
-      'comments': 'notes',
-      'remarks': 'notes'
+      'at': 'asset_tag', 'tag': 'asset_tag', 'sn': 'serial_number',
+      'dept': 'department', 'purchase request': 'pr', 'purchase_order': 'po',
+      'comments': 'notes', 'remarks': 'notes'
     };
 
     const validColumns = ['asset_tag', 'serial_number', 'model', 'status', 'department', 'pr', 'po', 'notes'];
-
+    
     // Normalize CSV keys -> DB column names
     const mappedData = csvData.map(row => {
-  const newRow = {};
+      const newRow = {};
+      Object.keys(row).forEach(key => {
+        const cleanKey = key.toLowerCase().trim();
+        const targetKey = aliasMap[cleanKey] || cleanKey;
 
-  Object.keys(row).forEach(key => {
-    const cleanKey = key
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9 ]/g, '')
-      .replace(/\s+/g, ' ');
+        if (validColumns.includes(targetKey)) 
+          newRow[targetKey] = row[key];  
+      });
+      return newRow;
+    });
 
-    const targetKey = aliasMap[cleanKey] || cleanKey;
-
-    if (validColumns.includes(targetKey)) {
-      const actualKey = Object.keys(row).find(k =>
-        k.toLowerCase()
-          .trim()
-          .replace(/[^a-z0-9 ]/g, '')
-          .replace(/\s+/g, ' ') === cleanKey
-      );
-
-      newRow[targetKey] = row[actualKey];
-    }
-  });
-
-  return newRow; // ⭐ REQUIRED
-});
-
-// ⭐ Upsert happens AFTER mapping
-const { error: upError } = await supabase
-  .from('assets')
-  .upsert(mappedData, { onConflict: 'asset_tag' });
+    // Perform upsert
+    const { error: upError } = await supabase
+      .from('assets')
+      .upsert(mappedData, { onConflict: 'asset_tag' });
 
     if (upError) {
       console.error("SUPABASE_UPSERT_ERROR:", upError);
@@ -139,16 +90,16 @@ const { error: upError } = await supabase
       // CRITICAL: We throw the error so CSVUploader knows the upload failed
 
       throw upError; // Important: tells CSVUploader the upload failed
-    }
+    } 
 
     console.log("UPSERT_SUCCESSFUL");
 
-    // Update local state so UI updates instantly
-    setAssets(prevAssets => {
-      const incomingMap = new Map(mappedData.map(item => [item.asset_tag, item]));
+      // Update local state so UI updates instantly
+      setAssets(prevAssets => {
+        const incomingMap = new Map(mappedData.map(item => [item.asset_tag, item]));
 
-      // Keep old assets that were NOT overwritten
-      const filteredOldAssets = prevAssets.filter(asset => !incomingMap.has(asset.asset_tag)
+        // Keep old assets that were NOT overwritten
+        const filteredOldAssets = prevAssets.filter(asset => !incomingMap.has(asset.asset_tag)
       );
 
       // New/updated assets first, then old ones
@@ -199,7 +150,7 @@ const { error: upError } = await supabase
       setError(updateError.message);
       setLoading(false);
       return false;
-    }
+    } 
 
     await loadData();
     return true;
@@ -210,14 +161,14 @@ const { error: upError } = await supabase
   }, []);
 
   return {
-    assets,
-    loading,
-    error,
+    assets, 
+    loading, 
+    error, 
     setError,
     addAsset,
-    bulkUpsertAssets,
-    deleteAsset,
-    deleteMultipleAssets,
+    bulkUpsertAssets, 
+    deleteAsset, 
+    deleteMultipleAssets, 
     updateAsset
   };
 }
