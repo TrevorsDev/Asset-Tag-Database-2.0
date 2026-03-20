@@ -102,7 +102,10 @@ function App() {
 
   return (
     <div className="app-container">
-      <h1>Pima County Assets</h1>
+      <div className="page-header">
+        <h1>Pima County Assets</h1>
+        <p className="page-subtitle">Asset lifecycle management dashboard</p>
+      </div>
 
       {/* --- TOOLBAR (GLOBAL ACTIONS) --- */}
       <AssetToolbar

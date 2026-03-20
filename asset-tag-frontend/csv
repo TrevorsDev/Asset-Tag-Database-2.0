@@ -1,0 +1,51 @@
+ASSET TAG,SERIAL NUMBER,MODEL,STATUS,DEPARTMENT,PURCHASE REQUEST,PURCHASE ORDER,NOTES
+AT-3000143,SN-JKL32122,Dell Latitude 7450,active,IT,PR-1001,PO-2025-2,Initial deployment
+AT-3000144,SN-HGB99281,HP EliteBook 850 G8,active,Health,PR-1002,PO-2025-3,New hire setup
+AT-3000145,SN-XCV11029,MacBook Pro 14,active,Sheriff,PR-1003,PO-2025-4,Mobile workstation
+AT-3000146,SN-WER88273,Dell OptiPlex 7090,inactive,Warehouse,PR-1004,PO-2025-5,Pending repair
+AT-3000147,SN-UIO44392,Lenovo ThinkPad T14,active,Finance,PR-1005,PO-2025-6,Standard issue
+AT-3000148,SN-QAZ55610,Surface Pro 9,active,IT,PR-1006,PO-2025-7,Tablet mode testing
+AT-3000149,SN-WSX66721,Dell Latitude 5430,retired,Operations,PR-1007,PO-2025-8,Battery swelling
+AT-3000150,SN-EDC77832,HP ProDesk 600,active,Health,PR-1008,PO-2025-9,Reception desk
+AT-3000151,SN-RFV88943,Apple iMac 24,active,Design,PR-1009,PO-2025-10,Creative suite
+AT-3000152,SN-TGB99054,Dell Precision 3660,active,Engineering,PR-1010,PO-2025-11,CAD workstation
+AT-3000153,SN-YHN11234,Lenovo M70q Tiny,active,Sheriff,PR-1011,PO-2025-12,Dispatch center
+AT-3000154,SN-UJM22345,Dell Latitude 7450,active,IT,PR-1012,PO-2025-13,Replacement unit
+AT-3000155,SN-IKL33456,HP EliteBook 840,inactive,Warehouse,PR-1013,PO-2025-14,Screen flicker
+AT-3000156,SN-OPM44567,MacBook Air M2,active,Health,PR-1014,PO-2025-15,Admin staff
+AT-3000157,SN-ZXC55678,Dell OptiPlex 5000,active,Finance,PR-1015,PO-2025-16,Remote setup
+AT-3000158,SN-VBN66789,Surface Laptop 5,active,Sheriff,PR-1016,PO-2025-17,Field supervisor
+AT-3000159,SN-MKO77890,Lenovo ThinkPad X1,active,IT,PR-1017,PO-2025-18,Executive team
+AT-3000160,SN-LPI88901,Dell Latitude 7450,retired,Operations,PR-1018,PO-2025-19,Water damage
+AT-3000161,SN-ASD99012,HP EliteBook 850 G8,active,Health,PR-1019,PO-2025-20,Clinic lab
+AT-3000162,SN-FGH11223,Dell Precision 3580,active,Engineering,PR-1020,PO-2025-21,Site visit laptop
+AT-3000163,SN-JKL22334,Apple Mac Mini,active,IT,PR-1021,PO-2025-22,Build server
+AT-3000164,SN-QWE33445,Dell OptiPlex 7090,active,Finance,PR-1022,PO-2025-23,Accounts payable
+AT-3000165,SN-RTY44556,Lenovo ThinkPad T14,active,Sheriff,PR-1023,PO-2025-24,Records unit
+AT-3000166,SN-UIO55667,HP ProBook 450,inactive,Warehouse,PR-1024,PO-2025-25,Keyboard failure
+AT-3000167,SN-PAS66778,Dell Latitude 5430,active,Health,PR-1025,PO-2025-26,Public health nurse
+AT-3000168,SN-DFG77889,Surface Pro 9,active,Operations,PR-1026,PO-2025-27,Inventory check
+AT-3000169,SN-HJK88990,MacBook Pro 16,active,Design,PR-1027,PO-2025-28,Video editing
+AT-3000170,SN-LZX99001,Dell OptiPlex 3000,retired,Finance,PR-1028,PO-2025-29,Cycle replacement
+AT-3000171,SN-CVB11335,HP EliteBook 840,active,Sheriff,PR-1029,PO-2025-30,Detectives office
+AT-3000172,SN-NMK22446,Lenovo M90q,active,IT,PR-1030,PO-2025-31,Data center terminal
+AT-3000173,SN-YUI33557,Dell Latitude 7450,active,Health,PR-1031,PO-2025-32,Staff laptop
+AT-3000174,SN-HJK44668,HP Z2 Mini G9,active,Engineering,PR-1032,PO-2025-33,Lab equipment
+AT-3000175,SN-XCV55779,Dell OptiPlex 7000,active,Warehouse,PR-1033,PO-2025-34,Shipping station
+AT-3000176,SN-BNM66880,Surface Laptop 5,active,Finance,PR-1034,PO-2025-35,Audit prep
+AT-3000177,SN-WER77991,Lenovo ThinkPad L13,inactive,IT,PR-1035,PO-2025-36,Broken hinge
+AT-3000178,SN-SDF88002,Dell Latitude 5430,active,Sheriff,PR-1036,PO-2025-37,Patrol support
+AT-3000179,SN-FGH99113,HP EliteBook 850 G8,active,Health,PR-1037,PO-2025-38,Telehealth unit
+AT-3000180,SN-JKL11224,Apple MacBook Air,active,Operations,PR-1038,PO-2025-39,HR training
+AT-3000181,SN-TYU22335,Dell OptiPlex 7090,active,Finance,PR-1039,PO-2025-40,Budget analyst
+AT-3000182,SN-IOP33446,Lenovo ThinkPad T14,retired,Warehouse,PR-1040,PO-2025-41,End of life
+AT-3000183,SN-GHJ44557,Dell Latitude 7450,active,Sheriff,PR-1041,PO-2025-42,Court liaison
+AT-3000184,SN-VBN55668,HP ProBook 450,active,Health,PR-1042,PO-2025-43,Nursing station
+AT-3000185,SN-ERT66779,Surface Pro 9,active,IT,PR-1043,PO-2025-44,Field tech kit
+AT-3000186,SN-DFG77880,Dell Precision 3660,active,Engineering,PR-1044,PO-2025-45,3D rendering
+AT-3000187,SN-HJK88991,MacBook Pro 14,active,Design,PR-1045,PO-2025-46,Graphic design
+AT-3000188,SN-CVB99002,Lenovo M70q,active,Sheriff,PR-1046,PO-2025-47,Records storage
+AT-3000189,SN-NMK11235,Dell OptiPlex 5000,inactive,Warehouse,PR-1047,PO-2025-48,No power
+AT-3000190,SN-YUI22346,HP EliteBook 840,active,Health,PR-1048,PO-2025-49,Home health
+AT-3000191,SN-BNM33457,Dell Latitude 7450,active,IT,PR-1049,PO-2025-50,Security lead
+AT-3000192,SN-QWE44568,Lenovo ThinkPad T14,active,Finance,PR-1050,PO-2025-51,Payroll laptop

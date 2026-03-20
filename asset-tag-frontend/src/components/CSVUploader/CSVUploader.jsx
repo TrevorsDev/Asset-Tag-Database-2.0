@@ -15,7 +15,12 @@ It does it by:
 - Logging or returning the parsed data for now 
 */
 
-import React, { useState, useRef } from 'react';
+import React, { 
+  useState, 
+  useRef, 
+  forwardRef, 
+  useImperativeHandle 
+} from 'react';
 import '../../App.css';
 import './CSVUploader.css'; // Import the new stylesheet
 import Alert from '../Alert';
@@ -52,7 +57,8 @@ const parseCSV = (csvString) => {
 };
 
 /* 'localError' prevents confusion with the database error coming from the 'useAssets' hook. */
-const CSVUploader = ({ onDataParsed, externalError, clearExternalError }) => {
+const CSVUploader = forwardRef(
+  ({ onDataParsed, externalError, clearExternalError }, ref) => {
   const [tempData, setTempData] = useState([]);
   // 'localError' specifically for file-parsing issues
   const [localError, setLocalError] = useState(null);
@@ -65,6 +71,13 @@ const CSVUploader = ({ onDataParsed, externalError, clearExternalError }) => {
   /*
   HELPER FUNCTIONS
   */
+
+  // Expose a method to parent (toolbar) to open file picker
+  useImperativeHandle(ref, () => ({
+    openFilePicker: () => {
+      fileInputRef.current?.click();
+    }
+  }));
 
   const resetFileInput = () => {
     if (fileInputRef.current) {
@@ -194,13 +207,6 @@ const CSVUploader = ({ onDataParsed, externalError, clearExternalError }) => {
             onChange={handleFileChange}
             accept=".csv"
           />
-
-          <label
-            htmlFor="csv-upload-input"
-            className={`global-btn primary-btn upload-label ${tempData.length > 0 ? 'secondary-btn' : ''}`}
-          >
-            {loading ? 'Processing...' : tempData.length > 0 ? 'Change File' : 'Choose a .csv file to upload'}
-          </label>
         </>
       )}
 
@@ -230,6 +236,6 @@ const CSVUploader = ({ onDataParsed, externalError, clearExternalError }) => {
       )}
     </div>
   );
-};
+});
 
 export default CSVUploader;

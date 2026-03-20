@@ -81,13 +81,27 @@ Asset_Tag_Database_2.0/
    - Professional file input behavior
 
 ### 🎨 UI/UX
-- Semantic HTML for accessibility.
+- Modern dark theme with subtle transparency and depth
 
-- Reusable button styles.
+- Premium table interactions (hover, active, selected states)
 
-- Reusable ```<Alert />``` component for success/error messaging.
+- Gradient‑blended action icon containers
 
-- Clean, consistent layout across components.
+- ProtonMail‑style hover‑activated row actions
+
+- Smooth icon reveal animations
+
+- Custom icon-button system with accessibility support
+
+- Keyboard‑friendly focus-visible rings
+
+- Clean, consistent spacing and layout rhythm
+
+- Reusable <Alert /> component for success/error messaging
+
+- CSV uploader with validation, error handling, and reset logic
+
+- Responsive layout with scalable component architecture
 
 ### ⚔️ Code Standards
 - Semantic HTML: Prioritizes the use of descriptive tags (`<section>`, `<label>`, `<p>`) over generic `<div>` nesting to improve accessibility and SEO.
@@ -199,15 +213,8 @@ The asset table now includes a scalable, enterprise‑ready bulk‑delete system
 - Removed local selection state from `AssetTable`.
 - Prepared the table for the upcoming **hover‑to‑activate selection mode** and **slide‑in checkbox column**.
 
-## 🔮 Upcoming UX Enhancements (Planned)
+## 🔮 UX Enhancements 
 
-- Hover‑activated selection handles on each row  
-- Slide‑in checkbox column with smooth animation  
-- A contextual action banner between toolbar and table  
-- “Delete X Assets” and “Cancel Selection” actions  
-- Polished row‑shift animations  
-
-#### UX Enhancements
 - Clear success and error alerts using a reusable ```<Alert />``` component.
 
 - “Change File” button appears only when appropriate.

@@ -12,10 +12,13 @@
         /* Soft slate border */
 
         /* --- BRAND & ACTION COLORS --- */
-        --color-action-primary: #10b981;
-        /* Emerald 500 */
-        --color-action-hover: #059669;
-        /* Emerald 600 */
+        --color-action-primary: #3b82f6;
+        /* Blue 500 */
+        --color-action-hover: #2563eb;
+        /* Blue 600 */
+        --color-action-focus: rgba(59, 130, 246, 0.6);
+        --color-action-tint: rgba(59, 130, 246, 0.12);
+
 
         /* Accesnts: For Edits */
         --color-action-edit: #3b82f6;
@@ -40,7 +43,7 @@
         --color-success-bg: rgba(16, 185, 129, 0.15);
 
         /* --- UI Helpers --- */
-        --radius-md: 8px;
+        --radius-md: 6px;
 
         /* --- TYPOGRAPHY --- */
         --color-text-main: #f8fafc;
@@ -58,6 +61,25 @@
         border: none;
     }
 }
+
+/* HEADER STYLING */
+.page-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: var(--color-text-main);
+}
+
+.page-subtitle {
+    font-size: 1.25rem;
+    color: var(--color-text-muted);
+    margin-top: 0.25rem;
+}
+
 
 /* Components layer — specific button variants */
 @layer components {
