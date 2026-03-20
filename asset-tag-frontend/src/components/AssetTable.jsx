@@ -92,6 +92,7 @@ const AssetTable = ({
                 >
                   <input
                     type="checkbox"
+                      // disabled={isDisabled}  // reserved for future permission/authorization logic
                     checked={selectedIds.includes(asset.id)}
                     onChange={() => {
                       toggleSelection(asset.id);
@@ -113,7 +114,7 @@ const AssetTable = ({
               <td className="asset-table__cell asset-table__cell--last">
                 <span className="asset-table__cell-text">{asset.notes}</span>
 
-                <div className="asset-table__actions-container">
+                <div className={"asset-table__actions-container"}>
                   <button
                     className="icon-button icon-button--trash"
                     onClick={() => handleDeleteClick(asset.id, asset.asset_tag)}

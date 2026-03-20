@@ -10,11 +10,12 @@
     border-collapse: collapse;
     background: var(--color-bg-surface);
     color: var(--color-text-main);
-} 
+}
 
 /* ELEMENT: Header Specifics */
 .asset-table__header {
-    background-color: #16202e; /* Slightly darker than surface for contrast */
+    background-color: #16202e;
+    /* Slightly darker than surface for contrast */
     color: var(--color-text-muted);
     font-weight: 800;
     padding: 1rem;
@@ -32,15 +33,16 @@
 }
 
 .asset-table__row {
-    transition: background-color 0.2s ease;
+    /* transition: background-color 0.2s ease; */
 }
 
-.asset-table__row:hover { 
-    background-color: rgba(255, 255, 255, 0.03); /* Subtle glass effect */ 
+.asset-table__row:hover {
+    background-color: #314054;
+    /* Subtle glass effect */
 }
 
-.asset-table__row--selected { 
-    background-color: #dc354631; 
+.asset-table__row--selected {
+    background-color: #dc354631;
 }
 
 /* ==========================================================================
@@ -65,7 +67,7 @@
 
 /* Trigger: When row is hovered, shift text to make room for icons */
 .asset-table__row:hover .asset-table__cell-text {
-    padding-right: 5rem; 
+    padding-right: 5rem;
 }
 
 /* The Ghost Container */
@@ -76,12 +78,11 @@
     transform: translateY(-50%);
     display: flex;
     gap: 0.5rem;
-    z-index: 10; 
+    z-index: 10;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s ease;
-    background: linear-gradient(90deg, transparent, var(--color-bg-surface) 25%);
-    border-radius: 10px;
+    border-radius: 5px;
     padding-left: 2rem;
 }
 
@@ -90,6 +91,19 @@
 .asset-table__row:focus-within .asset-table__actions-container {
     opacity: 1;
     pointer-events: auto;
+
+}
+
+.asset-table__row:hover .asset-table__actions-container {
+    background: linear-gradient(90deg, transparent, var(--color-border-subtle) 25%);
+}
+
+.asset-table__row:focus-within .asset-table__actions-container {
+    background: linear-gradient(90deg, transparent, var(--color-bg-surface) 25%);
+}
+
+.asset-table__row:hover:focus-within .asset-table__actions-container {
+    background: linear-gradient(90deg, transparent, var(--color-border-subtle) 25%);
 }
 
 /* ==========================================================================
@@ -102,74 +116,227 @@
     width: 1.8rem;
     height: 1.8rem;
     padding: 0;
-    border: none;
+    border-radius: 4px;
     background: transparent;
     cursor: pointer;
+}
+
+.icon-button:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.icon-button--trash,
+.icon-button--edit {
+    border: none;
     transition: color 0.2s, background-color 0.2s;
-    border-radius: 4px;
 }
 
-.icon-button--trash { color: var(--color-status-danger); }
-.icon-button--trash:hover { color: var(--color-status-danger-max); }
-.icon-button--edit:hover { color: var(--color-action-edit); }
-
-/* Accessibility: Keyboard Focus Only */
-.icon-button:focus-visible {
-    outline: 1px solid var(--color-status-danger);
+.icon-button--trash {
+    color: var(--color-status-danger);
 }
 
-/* /* ==========================================================================
-   STABLE CHECKBOX COLUMN (Gmail-style)
+.icon-button--trash:hover {
+    color: var(--color-status-danger-max);
+    background-color: #f59f0b1a;
+}
+
+.icon-button--trash:focus-visible {
+    border: 1px solid var(--color-status-danger);
+    box-shadow: 0 0 10px var(--color-status-danger);
+    transition: box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.icon-button--edit:hover {
+    color: var(--color-action-edit);
+    background-color: #3b83f624
+}
+
+.icon-button--edit:focus-visible {
+    border: 1px solid var(--color-action-edit);
+    box-shadow: 0 0 10px var(--color-action-edit);
+    transition: box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+/* /* /* ==========================================================================
+   CHECKBOX COLUMN — Gmail‑style hover + focus reveal
+   This system supports:
+   - hover reveal
+   - keyboard focus reveal
+   - selection mode reveal
+   - custom checkmark
+   - glow on hover/focus
+   - disabled state
    ========================================================================== */
 
-/* The column itself is fixed width */
+
+/* ==========================================================================
+   1. COLUMN LAYOUT
+   Fixed-width column that holds the checkbox wrapper.
+   ========================================================================== */
 td.checkbox-col,
 th.checkbox-col {
-  width: 24px ;
-  padding: 0 ;
-  overflow: visible;
-  position: relative;
-  border-bottom: 1px solid var(--color-border-subtle);
-}
-
-/* Wrapper that slides the checkbox in/out */
-.checkbox-wrapper {
-  position: absolute;
-  left: -24px; /* hidden to the left */
-  top: 50%;
-  transform: translateY(-50%);
-  width: 24px;
-  height: 24px;
-  display: flex;
-  justify-content: center;
-  transition: left 0.18s ease, opacity 0.18s ease;
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Hover mode: slide in */
-/* Selection mode: always visible */
-.checkbox-wrapper--hover,
-.checkbox-wrapper--active {
-  left: 0; /* slide into the cell */
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* Checkbox styling */
-.checkbox-wrapper input {
-  margin: 0 0 0 13px;
-  padding:0;
-  display: block;
-  width: 16px;
-  height: 16px;
+    width: 20px;
+    padding: 0;
+    overflow: visible;
+    position: relative;
+    border-bottom: 1px solid var(--color-border-subtle);
 }
 
 
 /* ==========================================================================
+   2. CHECKBOX WRAPPER (hidden by default)
+   - Positioned absolutely inside the cell
+   - Hidden visually (opacity)
+   - Still focusable (no visibility:hidden or off-screen positioning)
+   ========================================================================== */
+.checkbox-wrapper {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+/* ==========================================================================
+   3. REVEAL STATES (hover, active, focus-visible)
+   These states make the wrapper visible and interactive.
+   ========================================================================== */
+
+/* Hover reveal + selection mode reveal */
+.checkbox-wrapper--hover,
+.checkbox-wrapper--active {
+    left: 0;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Keyboard focus reveal (wrapper becomes visible when input is focused) */
+.checkbox-wrapper:has(input[type="checkbox"]:focus-visible) {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+
+/* ==========================================================================
+   4. BASE CHECKBOX STYLING
+   Custom checkbox square (no native appearance).
+   ========================================================================== */
+.checkbox-wrapper input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    width: 16px;
+    height: 16px;
+    border: 1px solid var(--color-text-muted);
+    cursor: pointer;
+    display: block;
+}
+
+
+/* ==========================================================================
+   5. CHECKED STATE
+   Border turns red when checked.
+   ========================================================================== */
+.checkbox-wrapper input[type="checkbox"]:checked {
+    border-color: var(--color-status-danger);
+}
+
+
+/* ==========================================================================
+   6. HOVER STATE (glow)
+   Soft red glow when hovering the checkbox.
+   ========================================================================== */
+.checkbox-wrapper input[type="checkbox"]:hover {
+    border-color: var(--color-status-danger);
+    box-shadow: 0 0 10px var(--color-status-danger);
+    transition: box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+
+/* ==========================================================================
+   7. CHECKMARK (custom drawn with borders)
+   Hidden by default, animates in when checked.
+   ========================================================================== */
+.checkbox-wrapper input[type="checkbox"]::after {
+    content: "";
+    position: absolute;
+    width: 9px;
+    height: 4.5px;
+    border-left: 2px solid var(--color-status-danger);
+    border-bottom: 1.5px solid var(--color-status-danger);
+    transform: scale(0);
+    transform-origin: center;
+    opacity: 0;
+    top: 6.5px;
+    left: 7.5px;
+    transition: transform 0.22s cubic-bezier(.2, 1.6, .4, 1.8);
+    pointer-events: none;
+}
+
+.checkbox-wrapper input[type="checkbox"]:checked::after {
+    transform: scale(1) rotate(-45deg);
+    opacity: 1;
+}
+
+
+/* ==========================================================================
+   8. FOCUS RING (keyboard only)
+   Glow + red border when focused via keyboard.
+   ========================================================================== */
+.checkbox-wrapper input[type="checkbox"]:focus-visible {
+    outline: none;
+    border-color: var(--color-status-danger);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.45);
+    transition: box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+
+/* ==========================================================================
+   9. DISABLED STATE
+   Dimmed, non-interactive, no glow, no reveal.
+   ========================================================================== */
+
+/* Dimmed checkbox */
+.checkbox-wrapper input[type="checkbox"]:disabled {
+    border-color: var(--color-border-subtle);
+    background-color: var(--color-bg-surface);
+    cursor: not-allowed;
+    opacity: 0.5;
+    box-shadow: none;
+}
+
+/* Dimmed checkmark */
+.checkbox-wrapper input[type="checkbox"]:disabled::after {
+    border-left-color: rgba(239, 68, 68, 0.35);
+    border-bottom-color: rgba(239, 68, 68, 0.35);
+}
+
+/* No hover glow when disabled */
+.checkbox-wrapper input[type="checkbox"]:disabled:hover {
+    box-shadow: none;
+    border-color: var(--color-border-subtle);
+}
+
+/* Wrapper should not reveal for disabled rows */
+.checkbox-wrapper--hover:has(input:disabled),
+.checkbox-wrapper--active:has(input:disabled) {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* ==========================================================================
    MISC / UTILITIES
    ========================================================================== */
-   
+
 .asset-table__controls {
     display: flex;
     gap: 1rem;
