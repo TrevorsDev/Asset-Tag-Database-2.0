@@ -6,13 +6,14 @@
 // Passes that list to AssetTable
 // Passes the addAsset() function to AssetForm
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import AssetToolbar from './components/AssetToolbar.jsx';
 import AssetTable from './components/AssetTable';
 import AssetModal from './components/AssetModal.jsx';
 import CSVUploader from './components/CSVUploader/CSVUploader.jsx';
 import ConfirmDialog from './components/ConfirmDialog.jsx';
+import ExportModal from './components/ExportModal.jsx';
 
 import useAssets from './hooks/useAssets.js';
 import BulkDeleteBanner from './components/BulkDeleteBanner.jsx';
@@ -35,6 +36,7 @@ function App() {
   const [selectedAsset, setSelectedAsset] = useState(null); //null = Add Mode
   const [searchQuery, setSearchQuery] = useState('');
   const [showCSVUploader, setShowCSVUploader] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   // --- 3. TOOLBAR ACTIONS ---
 
@@ -79,8 +81,13 @@ function App() {
 
   // EXPORT FILE HANDLER
   const handleExportCSV = () => {
+    if (!assets || assets.length === 0) return;
+    setShowExportModal(true);
+  };
+
+  const handleConfirmExport = () => {
+    setShowExportModal(false);
     if (!assets || assets.length === 0) {
-      console.warn("No assets available to export.");
       return;
     }
 
@@ -140,6 +147,11 @@ function App() {
   // --- 8. SELECTION STATE (for bulk delete) ---
   const [selectedIds, setSelectedIds] = useState([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
+
+  // Auto-dismiss banner when last checkbox is unchecked
+  useEffect(() => {
+    if (selectedIds.length === 0) setIsSelectionMode(false);
+  }, [selectedIds]);
   const [confirmDialog, setConfirmDialog] = useState(null); // null = closed
 
   // --- 9. BULK DELETE HANDLER ---
@@ -178,6 +190,14 @@ function App() {
         onDeleteSelected={handleBulkDelete}
       />
 
+      {/* --- EXPORT MODAL (CONDITIONALLY SHOWN) --- */}
+      <ExportModal
+        isOpen={showExportModal}
+        assetCount={assets.length}
+        onConfirm={handleConfirmExport}
+        onClose={() => setShowExportModal(false)}
+      />
+
       {/* --- CSV UPLOADER (CONDITIONALLY SHOWN) --- */}
       {showCSVUploader && (
         <CSVUploader
@@ -188,16 +208,15 @@ function App() {
         />
       )}
 
-      {isSelectionMode && (
-        <BulkDeleteBanner
-          selectedCount={selectedIds.length}
-          onDeleteSelected={handleBulkDelete}
-          onCancel={() => {
-            setIsSelectionMode(false);
-            setSelectedIds([]);
-          }}
-        />
-      )}
+      <BulkDeleteBanner
+        isVisible={isSelectionMode}
+        selectedCount={selectedIds.length}
+        onDeleteSelected={handleBulkDelete}
+        onCancel={() => {
+          setIsSelectionMode(false);
+          setSelectedIds([]);
+        }}
+      />
 
       {/* --- ASSET TABLER (ROW-LEVEL ACTIONS) --- */}
       <AssetTable

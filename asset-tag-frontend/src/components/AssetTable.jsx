@@ -64,14 +64,14 @@ const AssetTable = ({
         <thead className="asset-table__header">
           <tr>
             <th className="checkbox-col"></th>
-            <th className="asset-table__header u-text-center">Asset Tag</th>
-            <th className="asset-table__header u-text-center">Serial Number</th>
-            <th className="asset-table__header u-text-center">Model</th>
-            <th className="asset-table__header u-text-center">Status</th>
-            <th className="asset-table__header u-text-center">Department</th>
-            <th className="asset-table__header u-text-center">Purchase Request</th>
-            <th className="asset-table__header u-text-center">Purchase Order</th>
-            <th className="asset-table__header u-text-center">Notes</th>
+            <th className="asset-table__header">Asset Tag</th>
+            <th className="asset-table__header">Serial Number</th>
+            <th className="asset-table__header">Model</th>
+            <th className="asset-table__header">Status</th>
+            <th className="asset-table__header">Department</th>
+            <th className="asset-table__header">Purchase Request</th>
+            <th className="asset-table__header">Purchase Order</th>
+            <th className="asset-table__header">Notes</th>
           </tr>
         </thead>
 
@@ -109,13 +109,13 @@ const AssetTable = ({
 
 
               {/* Data cells */}
-              <td className="asset-table__cell u-text-center">{asset.asset_tag}</td>
-              <td className="asset-table__cell u-text-center">{asset.serial_number}</td>
-              <td className="asset-table__cell u-text-center">{asset.model}</td>
-              <td className="asset-table__cell u-text-center">{asset.status}</td>
-              <td className="asset-table__cell u-text-center">{asset.department}</td>
-              <td className="asset-table__cell u-text-center">{asset.pr}</td>
-              <td className="asset-table__cell u-text-center">{asset.po}</td>
+              <td className="asset-table__cell">{asset.asset_tag}</td>
+              <td className="asset-table__cell">{asset.serial_number}</td>
+              <td className="asset-table__cell">{asset.model}</td>
+              <td className="asset-table__cell">{asset.status}</td>
+              <td className="asset-table__cell">{asset.department}</td>
+              <td className="asset-table__cell">{asset.pr}</td>
+              <td className="asset-table__cell">{asset.po}</td>
               <td className="asset-table__cell asset-table__cell--last">
                 <span className="asset-table__cell-text">{asset.notes}</span>
 

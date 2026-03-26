@@ -15,20 +15,28 @@
 @layer base {
     :root {
         /* --- SURFACE & BACKGROUNDS --- */
-        --color-bg-main: #0f172a;          /* Deep Navy/Slate */
-        --color-bg-surface: #1e293b;       /* Lighter Slate for cards/modals */
-        --color-border-subtle: #334155;    /* Soft slate border */
+        --color-bg-main: #0f172a;
+        /* Deep Navy/Slate */
+        --color-bg-surface: #1e293b;
+        /* Lighter Slate for cards/modals */
+        --color-border-subtle: #334155;
+        /* Soft slate border */
 
         /* --- BRAND & ACTION COLORS --- */
-        --color-action-primary: #3b82f6;   /* Blue 500 */
-        --color-action-hover: #2563eb;     /* Blue 600 */
+        --color-action-primary: #3b82f6;
+        /* Blue 500 */
+        --color-action-hover: #2563eb;
+        /* Blue 600 */
         --color-action-focus: rgba(59, 130, 246, 0.6);
         --color-action-tint: rgba(59, 130, 246, 0.12);
-        --color-action-edit: #3b82f6;      /* Vivid Blue */
+        --color-action-edit: #3b82f6;
+        /* Vivid Blue */
 
         /* --- STATUS & FEEDBACK --- */
-        --color-status-danger: #ef4444;    /* Rose Red */
-        --color-status-danger-max: #f59e0b; /* Amber */
+        --color-status-danger: #ef4444;
+        /* Rose Red */
+        --color-status-danger-max: #f59e0b;
+        /* Amber */
 
         /* Error variants */
         --color-error-bg: rgba(239, 68, 68, 0.15);
@@ -42,10 +50,13 @@
 
         /* --- UI HELPERS --- */
         --radius-md: 6px;
+        --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.4);
 
         /* --- TYPOGRAPHY --- */
-        --color-text-main: #f8fafc;        /* Off-white (Slate 50) */
-        --color-text-muted: #94a3b8;       /* Muted Blue-Gray */
+        --color-text-main: #f8fafc;
+        /* Off-white (Slate 50) */
+        --color-text-muted: #94a3b8;
+        /* Muted Blue-Gray */
         --font-weight-normal: 400;
         --font-weight-medium: 500;
     }
@@ -71,7 +82,7 @@
         font-family: inherit;
         cursor: pointer;
         transition: 0.3s ease;
-        border: none;
+        border: 1px solid transparent;
     }
 }
 
@@ -80,6 +91,13 @@
    LAYER 2: COMPONENTS
    ========================================================================== */
 @layer components {
+
+    /* Base hover — variants below override this */
+    .global-btn:hover {
+        background-color: var(--color-action-hover);
+        outline: none;
+    }
+
     .primary-btn {
         padding: 0.75rem 1rem;
         font-size: 1rem;
@@ -89,23 +107,43 @@
     }
 
     .secondary-btn {
-        padding: 0.5rem 0.75rem;
-        font-size: 0.90rem;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9rem;
         font-weight: var(--font-weight-normal);
-        color: var(--color-text-main);
-        background-color: var(--color-bg-surface);
+        color: var(--color-text-muted);
+        background: transparent;
+        border: 1px solid transparent;
+        transition: color 0.15s ease, text-shadow 0.15s ease;
     }
 
-    .global-btn:hover {
-        background-color: var(--color-action-hover);
-        border: transparent;
-        outline: none;
+    .secondary-btn:hover {
+        background: transparent;
+        color: var(--color-text-main);
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+    }
+
+    .secondary-btn:focus-visible {
+        color: var(--color-text-main);
+        text-shadow: 0 0 10px var(--color-action-edit);
+    }
+
+    .danger-btn {
+        padding: 0.6rem 1.25rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #fff;
+        background-color: var(--color-status-danger);
+        border: 1px solid transparent;
+        /* prevents layout shift on focus */
+    }
+
+    .danger-btn:hover {
+        background-color: #dc2626;
     }
 
     .global-btn:focus:not(:focus-visible),
     .global-btn:active {
         outline: none;
-        border: none;
     }
 
     .global-btn:focus-visible {
@@ -141,6 +179,23 @@
     .u-hidden {
         display: none;
     }
+
+    /* Full-screen fixed overlay — used by all modals */
+    .u-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Column-direction flex centering */
+    .u-flex-col-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
 }
 
 
@@ -166,6 +221,29 @@
 
 
 /* ==========================================================================
+   MODAL CLOSE BUTTON (unlayered — shared across AssetModal, ExportModal, CSVUploader)
+   ========================================================================== */
+.modal-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.modal-close-btn:hover {
+    color: var(--color-text-main);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* ==========================================================================
    FOCUS RINGS (unlayered — must win over everything, including index.css)
 
    Two variants map to the app's two semantic color roles:
@@ -175,6 +253,8 @@
    Applied as a utility class in JSX alongside the element's own classes.
    ========================================================================== */
 .focus-ring--action:focus-visible {
+    color: var(--color-text-main);
+    text-shadow: 0 0 10px var(--color-action-edit);
     outline: none;
     border: 1px solid var(--color-action-edit);
     box-shadow: 0 0 10px var(--color-action-edit);

@@ -92,7 +92,7 @@ const AssetModal = ({ asset, isOpen, onClose, onSave, error }) => {
     const friendlyError = getErrorMessage(error);
 
     return (
-        <div className="asset-modal__overlay" onClick={onClose}>
+        <div className="asset-modal__overlay u-overlay u-flex-center" onClick={onClose}>
             <div
                 className="asset-modal__container"
                 onClick={(e) => e.stopPropagation()}
@@ -103,7 +103,7 @@ const AssetModal = ({ asset, isOpen, onClose, onSave, error }) => {
                     <h3 className="asset-modal__title">
                         {asset.id ? `Edit Asset: ${asset.asset_tag}` : 'Add Asset'}
                     </h3>
-                    <button className="icon-button" onClick={onClose} aria-label="Close">
+                    <button className="modal-close-btn focus-ring--action" onClick={onClose} aria-label="Close">
                         <X />
                     </button>
                 </div>
@@ -153,10 +153,10 @@ const AssetModal = ({ asset, isOpen, onClose, onSave, error }) => {
                     </div>
 
                     <div className="asset-modal__actions">
-                        <button type="submit" className="global-btn primary-btn">
+                        <button type="submit" className="global-btn primary-btn focus-ring--action">
                             Save Changes
                         </button>
-                        <button type="button" className="global-btn secondary-btn" onClick={onClose}>
+                        <button type="button" className="global-btn secondary-btn focus-ring--action" onClick={onClose}>
                             Cancel
                         </button>
                     </div>

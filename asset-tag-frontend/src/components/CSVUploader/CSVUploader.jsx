@@ -1,90 +1,65 @@
-/* 
-This file:
-- Accepts a .csv file upload
-- Parses the file manually (no third-party libraries like PapaParse)
-- Validates the structure
-- Returns a usable JavaScript array of objects
-- Prepares the data to be sent to your backend (eventually SQL Server) 
-
-It does it by:
-- Rendering a file input for .csv files
-- Reading the file using the FileReader API
-- Spliting the content into rows and columns
-- Converting it into an array of objects
-- Validating that required headers are present
-- Logging or returning the parsed data for now 
-*/
-
-import React, { 
-  useState, 
-  useRef, 
-  forwardRef, 
-  useImperativeHandle 
-} from 'react';
+import { useState, useRef } from 'react';
+import { X, UploadCloud, FileText } from 'lucide-react';
+import Papa from 'papaparse';
 import '../../App.css';
-import './CSVUploader.css'; // Import the new stylesheet
+import './CSVUploader.css';
 import Alert from '../Alert';
 
-/**
- * CSV PARSER
+/*
+ * Normalize a header string into a consistent key.
+ * - Strips BOM, quotes, extra whitespace
+ * - Lowercases and replaces spaces with underscores
  */
-const parseCSV = (csvString) => {
-  const lines = csvString.trim().split(/\r\n|\n/);
-  if (lines.length === 0) throw new Error("CSV file is empty.");
-
-  const headers = lines[0].split(',').map(header => header.trim());
-  const result = [];
-
-  for (let i = 1; i < lines.length; i++) {
-    if (!lines[i].trim()) continue; // skip blank lines
-
-    const values = lines[i].split(',').map(v => v.trim());
-    if (values.length !== headers.length) continue;
-
-    const row = {}
-    headers.forEach((h, idx) => {
-      row[h] = values[idx];
-    });
-
-    result.push(row);
-  }
-
-  if (result.length === 0) {
-    throw new Error("CSV contains headers but no data rows")
-  }
-
-  return result;
+const normalizeHeader = (header) => {
+  if (!header) return '';
+  return header
+    .replace(/^\uFEFF/, '')
+    .trim()
+    .replace(/^"|"$/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, '_');
 };
 
-/* 'localError' prevents confusion with the database error coming from the 'useAssets' hook. */
-const CSVUploader = forwardRef(
-  ({ onDataParsed, externalError, clearExternalError }, ref) => {
+/*
+ * Parse CSV using PapaParse.
+ * Returns a promise that resolves to an array of row objects.
+ */
+const parseCSV = (file) => {
+  return new Promise((resolve, reject) => {
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      transformHeader: normalizeHeader,
+      complete: (results) => {
+        if (results.errors && results.errors.length > 0) {
+          reject(new Error('There was a problem parsing the CSV file. Please check the format.'));
+          return;
+        }
+        const data = results.data || [];
+        if (data.length === 0) {
+          reject(new Error('CSV contains headers but no data rows.'));
+          return;
+        }
+        resolve(data);
+      },
+      error: () => reject(new Error('Failed to read the CSV file.'))
+    });
+  });
+};
+
+const CSVUploader = ({ onDataParsed, externalError, clearExternalError, onClose }) => {
   const [tempData, setTempData] = useState([]);
-  // 'localError' specifically for file-parsing issues
   const [localError, setLocalError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [lastUploadCount, setLastUploadCount] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
 
   const fileInputRef = useRef(null);
 
-  /*
-  HELPER FUNCTIONS
-  */
-
-  // Expose a method to parent (toolbar) to open file picker
-  useImperativeHandle(ref, () => ({
-    openFilePicker: () => {
-      fileInputRef.current?.click();
-    }
-  }));
-
-  const resetFileInput = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
+  // -------------------------
+  // HELPERS
+  // -------------------------
   const clearAllErrors = () => {
     setLocalError(null);
     if (clearExternalError) clearExternalError();
@@ -95,47 +70,59 @@ const CSVUploader = forwardRef(
     setUploadSuccess(false);
     setLastUploadCount(0);
     clearAllErrors();
-    resetFileInput();
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
-  //------------------------
-  // FILE SELECTION
-  //------------------------
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
+  const processFile = async (file) => {
     if (!file) return;
-
     clearAllErrors();
 
     if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
-      setLocalError("Please upload a valid .csv file.");
-      resetFileInput();
+      setLocalError('Please upload a valid .csv file.');
       return;
     }
 
     setLoading(true);
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const parsed = parseCSV(e.target.result);
-        setTempData(parsed);
-      } catch (err) {
-        setLocalError(`Error parsing file: ${err.message}`);
-        resetFileInput();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    reader.readAsText(file);
+    try {
+      const parsed = await parseCSV(file);
+      setTempData(parsed);
+    } catch (err) {
+      setLocalError(`Error parsing file: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // -------------------------
+  // FILE INPUT
+  // -------------------------
+  const handleFileChange = (e) => processFile(e.target.files[0]);
 
-  //----------------------
+  // -------------------------
+  // DRAG AND DROP
+  // -------------------------
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => setIsDragging(false);
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    processFile(e.dataTransfer.files[0]);
+  };
+
+  // -------------------------
   // UPLOAD TO DATABASE
-  // ---------------------
+  // -------------------------
   const handleUpload = async () => {
+    if (tempData.length === 0) {
+      setLocalError('No rows to upload. Please select a CSV file.');
+      return;
+    }
+
     setLoading(true);
     clearAllErrors();
     setUploadSuccess(false);
@@ -143,99 +130,147 @@ const CSVUploader = forwardRef(
     try {
       const rowCount = tempData.length;
       await onDataParsed(tempData);
-
       setLastUploadCount(rowCount);
       setUploadSuccess(true);
       setTempData([]);
-      resetFileInput();
-
+      if (fileInputRef.current) fileInputRef.current.value = '';
     } catch (err) {
-      console.error("Database rejected the upload:", err);
       setUploadSuccess(false);
       setTempData([]);
-      resetFileInput();
+      if (fileInputRef.current) fileInputRef.current.value = '';
     } finally {
       setLoading(false);
     }
   };
 
-  // --------------------
-  // CANCEL PREVIEW
-  // --------------------
-  const handleCancel = () => {
-    resetState();
+  // -------------------------
+  // RENDER: PREVIEW TABLE
+  // -------------------------
+  const renderPreviewTable = () => {
+    const previewRows = tempData.slice(0, 10);
+    const columns = Array.from(new Set(previewRows.flatMap(row => Object.keys(row))));
+    if (columns.length === 0) return null;
+
+    return (
+      <div className="csv-preview-table-wrapper">
+        <p className="csv-preview-text">
+          Previewing <strong>{Math.min(10, tempData.length)}</strong> of <strong>{tempData.length}</strong> rows
+        </p>
+        <div className="csv-preview-table-scroll">
+          <table className="csv-preview-table">
+            <thead>
+              <tr>
+                {columns.map(col => <th key={col}>{col}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {previewRows.map((row, idx) => (
+                <tr key={idx}>
+                  {columns.map(col => <td key={col}>{row[col] ?? ''}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
   };
 
-  // --------------------
+  // -------------------------
   // RENDER
-  // --------------------
+  // -------------------------
   return (
-    <div className="csv-uploader-container">
-      {/* 1. Notifications Area */}
-      {/* SUCCESS MESSAGE:
-       Check both the success state AND ensure no errors are blocking it 
-      */}
-      {uploadSuccess && !externalError && !localError && (
-        <Alert
-          type="success"
-          message={`${lastUploadCount} assets successfully imported!`}
-          onClose={resetState}
-        />
-      )}
+    <div className="csv-modal-overlay u-overlay u-flex-center" onClick={onClose}>
+      <div
+        className="csv-modal"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+      >
 
-      {/* ERROR MESSAGE:
-    This logic shows either a local fiile error OR the database error.
-    */}
-      {(localError || externalError) && (
-        <Alert
-          type="error"
-          message={localError || externalError}
-          onClose={resetState}
-        />
-      )}
-
-      {/* 2. Upload Action Area */}
-      {/* FILE INPUT
-      If we aren't showing a success message, show the button */}
-      {!uploadSuccess && (
-        <>
-          <input
-            type="file"
-            id="csv-upload-input"
-            className="hidden-file-input"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept=".csv"
-          />
-        </>
-      )}
-
-      {/* THE PREVIEW & CONFIRM SECTION */}
-      {tempData.length > 0 && !uploadSuccess && (
-        <div className="upload-preview-box">
-          <p className='preview-text'>
-            <strong>{tempData.length}</strong> rows ready to upload.
-          </p>
-
-          <button
-            className="global-btn primary-btn confirm-btn"
-            onClick={handleUpload}
-            disabled={loading}
-          >
-            {loading ? 'Uploading...' : 'Confirm & Upload'}
-          </button>
-
-          <button
-            className="global-btn primary-btn cancel-btn"
-            onClick={handleCancel}
-            disabled={loading}
-          >
-            Cancel
+        {/* HEADER */}
+        <div className="csv-modal__header">
+          <h3 className="csv-modal__title">Upload CSV</h3>
+          <button className="modal-close-btn focus-ring--action" onClick={onClose} aria-label="Close">
+            <X />
           </button>
         </div>
-      )}
+
+        {/* NOTIFICATIONS */}
+        {uploadSuccess && !externalError && !localError && (
+          <Alert
+            type="success"
+            message={`${lastUploadCount} asset${lastUploadCount !== 1 ? 's' : ''} successfully imported!`}
+            onClose={() => { resetState(); onClose(); }}
+          />
+        )}
+
+        {(localError || externalError) && (
+          <Alert
+            type="error"
+            message={localError || externalError}
+            onClose={clearAllErrors}
+          />
+        )}
+
+        {/* STATE 1: DROP ZONE (no file selected yet) */}
+        {tempData.length === 0 && !uploadSuccess && (
+          <div
+            className={`csv-drop-zone u-flex-col-center${isDragging ? ' csv-drop-zone--active' : ''}`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="csv-hidden-input"
+              onChange={handleFileChange}
+              accept=".csv"
+            />
+
+            <UploadCloud className="csv-drop-zone__icon" />
+            <p className="csv-drop-zone__primary">
+              {loading ? 'Parsing file...' : 'Drop your CSV here'}
+            </p>
+            <p className="csv-drop-zone__secondary">
+              or <span className="csv-drop-zone__link">click to browse</span>
+            </p>
+
+            <div className="csv-drop-zone__hint">
+              <FileText className="csv-drop-zone__hint-icon" />
+              <span>Expected columns: asset_tag, serial_number, model, status, department, pr, po, notes</span>
+            </div>
+          </div>
+        )}
+
+        {/* STATE 2: PREVIEW */}
+        {tempData.length > 0 && !uploadSuccess && (
+          <div className="csv-preview-box">
+            {renderPreviewTable()}
+            <div className="csv-preview-actions">
+              <button
+                className="global-btn primary-btn focus-ring--action"
+                onClick={handleUpload}
+                disabled={loading}
+              >
+                {loading ? 'Uploading...' : 'Confirm & Upload'}
+              </button>
+              <button
+                className="global-btn secondary-btn focus-ring--action"
+                onClick={resetState}
+                disabled={loading}
+              >
+                Choose Different File
+              </button>
+            </div>
+          </div>
+        )}
+
+      </div>
     </div>
   );
-});
+};
 
 export default CSVUploader;

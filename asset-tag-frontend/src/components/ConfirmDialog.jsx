@@ -31,7 +31,7 @@ const ConfirmDialog = ({
     if (!isOpen) return null;
 
     return (
-        <div className="confirm-dialog__overlay u-flex-center" onClick={onCancel}>
+        <div className="confirm-dialog__overlay u-overlay u-flex-center" onClick={onCancel}>
             <div
                 className="confirm-dialog__container u-text-center"
                 onClick={(e) => e.stopPropagation()}
@@ -51,13 +51,13 @@ const ConfirmDialog = ({
 
                 <div className="confirm-dialog__actions u-flex-center">
                     <button
-                        className="global-btn confirm-dialog__btn--cancel focus-ring--action"
+                        className="global-btn secondary-btn focus-ring--action"
                         onClick={onCancel}
                     >
                         Cancel
                     </button>
                     <button
-                        className="global-btn confirm-dialog__btn--confirm focus-ring--danger"
+                        className="global-btn danger-btn focus-ring--danger"
                         onClick={onConfirm}
                     >
                         {confirmLabel}

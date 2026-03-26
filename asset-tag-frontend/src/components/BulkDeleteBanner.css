@@ -3,26 +3,50 @@
    ========================================================================== */
 
 .bulk-delete-banner {
-    position: relative;
-    z-index: 1;
-    /* sits behind the toolbar */
-    background: var(--color-border-subtle);
-    padding: 2px 40px;
-    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--color-bg-surface);
+
+    /* Collapsed state — takes up no space, invisible */
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 1.5rem;
+    opacity: 0;
+    border-top: 1px solid transparent;
+    border-bottom: 2px solid transparent;
+
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    animation: slideDown 0.2s ease-out;
+    gap: 1rem;
+
+    transition:
+        max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        padding    0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity    0.25s ease,
+        border-color 0.3s ease;
 }
 
-@keyframes slideDown {
-    from {
-        transform: translateY(-100%);
-        opacity: 0;
-    }
+/* Expanded state — smoothly rises into view */
+.bulk-delete-banner--visible {
+    max-height: 60px;
+    padding: 0.6rem 1.5rem;
+    opacity: 1;
+    border-top-color: var(--color-border-subtle);
+    border-bottom-color: var(--color-status-danger);
+}
 
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+.bulk-delete-banner__count {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    flex: 1;
+}
+
+.bulk-delete-banner__count strong {
+    color: var(--color-text-main);
+}
+
+.bulk-delete-banner__actions {
+    display: flex;
+    gap: 0.5rem;
 }
