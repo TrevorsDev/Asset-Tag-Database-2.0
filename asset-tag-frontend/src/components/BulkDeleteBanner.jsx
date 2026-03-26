@@ -1,8 +1,8 @@
 import './BulkDeleteBanner.css';
 
-function BulkDeleteBanner({ selectedCount, onDeleteSelected, onCancel }) {
+function BulkDeleteBanner({ isVisible, selectedCount, onDeleteSelected, onCancel }) {
     return (
-        <div className="bulk-delete-banner">
+        <div className={`bulk-delete-banner${isVisible ? ' bulk-delete-banner--visible' : ''}`}>
             <p className="bulk-delete-banner__count">
                 <strong>{selectedCount}</strong> asset{selectedCount !== 1 ? 's' : ''} selected
             </p>

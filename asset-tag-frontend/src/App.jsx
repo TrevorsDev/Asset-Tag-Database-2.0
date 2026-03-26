@@ -6,7 +6,7 @@
 // Passes that list to AssetTable
 // Passes the addAsset() function to AssetForm
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import AssetToolbar from './components/AssetToolbar.jsx';
 import AssetTable from './components/AssetTable';
@@ -147,6 +147,11 @@ function App() {
   // --- 8. SELECTION STATE (for bulk delete) ---
   const [selectedIds, setSelectedIds] = useState([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
+
+  // Auto-dismiss banner when last checkbox is unchecked
+  useEffect(() => {
+    if (selectedIds.length === 0) setIsSelectionMode(false);
+  }, [selectedIds]);
   const [confirmDialog, setConfirmDialog] = useState(null); // null = closed
 
   // --- 9. BULK DELETE HANDLER ---
@@ -203,16 +208,15 @@ function App() {
         />
       )}
 
-      {isSelectionMode && (
-        <BulkDeleteBanner
-          selectedCount={selectedIds.length}
-          onDeleteSelected={handleBulkDelete}
-          onCancel={() => {
-            setIsSelectionMode(false);
-            setSelectedIds([]);
-          }}
-        />
-      )}
+      <BulkDeleteBanner
+        isVisible={isSelectionMode}
+        selectedCount={selectedIds.length}
+        onDeleteSelected={handleBulkDelete}
+        onCancel={() => {
+          setIsSelectionMode(false);
+          setSelectedIds([]);
+        }}
+      />
 
       {/* --- ASSET TABLER (ROW-LEVEL ACTIONS) --- */}
       <AssetTable
