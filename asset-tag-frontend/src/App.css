@@ -81,6 +81,12 @@
    LAYER 2: COMPONENTS
    ========================================================================== */
 @layer components {
+    /* Base hover — variants below override this */
+    .global-btn:hover {
+        background-color: var(--color-action-hover);
+        outline: none;
+    }
+
     .primary-btn {
         padding: 0.75rem 1rem;
         font-size: 1rem;
@@ -90,17 +96,24 @@
     }
 
     .secondary-btn {
-        padding: 0.6rem 1.25rem;
+        padding: 0.75rem 1.25rem;
         font-size: 0.9rem;
         font-weight: var(--font-weight-normal);
         color: var(--color-text-muted);
         background: transparent;
         border: 1px solid transparent;
+        transition: color 0.15s ease, text-shadow 0.15s ease;
     }
 
     .secondary-btn:hover {
+        background: transparent;
         color: var(--color-text-main);
-        background: rgba(255, 255, 255, 0.06);
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+    }
+
+    .secondary-btn:focus-visible {
+        color: var(--color-text-main);
+        text-shadow: 0 0 10px var(--color-action-edit);
     }
 
     .danger-btn {
@@ -116,15 +129,9 @@
         background-color: #dc2626;
     }
 
-    .global-btn:hover {
-        background-color: var(--color-action-hover);
-        outline: none;
-    }
-
     .global-btn:focus:not(:focus-visible),
     .global-btn:active {
         outline: none;
-        border: none;
     }
 
     .global-btn:focus-visible {
@@ -213,7 +220,7 @@
     padding: 0;
     background: transparent;
     border: none;
-    border-radius: 50%;
+    border-radius: var(--radius-md);
     color: var(--color-text-muted);
     cursor: pointer;
     transition: color 0.15s ease, background-color 0.15s ease;

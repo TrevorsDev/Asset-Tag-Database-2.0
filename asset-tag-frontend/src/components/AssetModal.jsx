@@ -153,10 +153,10 @@ const AssetModal = ({ asset, isOpen, onClose, onSave, error }) => {
                     </div>
 
                     <div className="asset-modal__actions">
-                        <button type="submit" className="global-btn primary-btn">
+                        <button type="submit" className="global-btn primary-btn focus-ring--action">
                             Save Changes
                         </button>
-                        <button type="button" className="global-btn secondary-btn" onClick={onClose}>
+                        <button type="button" className="global-btn secondary-btn focus-ring--action" onClick={onClose}>
                             Cancel
                         </button>
                     </div>
