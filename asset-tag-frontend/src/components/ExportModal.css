@@ -1,0 +1,79 @@
+/* BLOCK: export-modal
+   Overlay and container styles inherited from AssetModal.css.
+   This file only contains export-specific layout and content styles.
+   ========================================================================== */
+
+.export-modal__container {
+    max-width: 480px;
+}
+
+/* ELEMENT: Summary bar — record count + filename */
+.export-modal__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.25rem 0 1.25rem 0;
+    border-bottom: 1px solid var(--color-border-subtle);
+    margin-bottom: 1.5rem;
+}
+
+.export-modal__stat {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.export-modal__stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+    line-height: 1;
+}
+
+.export-modal__stat-label {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}
+
+.export-modal__filename {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    font-family: monospace;
+}
+
+.export-modal__file-icon {
+    color: var(--color-action-primary);
+    flex-shrink: 0;
+}
+
+/* ELEMENT: Columns section */
+.export-modal__columns {
+    margin-bottom: 0.5rem;
+}
+
+.export-modal__section-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin: 0 0 0.75rem 0;
+}
+
+.export-modal__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.export-modal__chip {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    background: var(--color-border-subtle);
+    color: var(--color-text-muted);
+    border: 1px solid transparent;
+}

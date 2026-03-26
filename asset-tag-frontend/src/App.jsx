@@ -13,6 +13,7 @@ import AssetTable from './components/AssetTable';
 import AssetModal from './components/AssetModal.jsx';
 import CSVUploader from './components/CSVUploader/CSVUploader.jsx';
 import ConfirmDialog from './components/ConfirmDialog.jsx';
+import ExportModal from './components/ExportModal.jsx';
 
 import useAssets from './hooks/useAssets.js';
 import BulkDeleteBanner from './components/BulkDeleteBanner.jsx';
@@ -35,6 +36,7 @@ function App() {
   const [selectedAsset, setSelectedAsset] = useState(null); //null = Add Mode
   const [searchQuery, setSearchQuery] = useState('');
   const [showCSVUploader, setShowCSVUploader] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   // --- 3. TOOLBAR ACTIONS ---
 
@@ -79,8 +81,13 @@ function App() {
 
   // EXPORT FILE HANDLER
   const handleExportCSV = () => {
+    if (!assets || assets.length === 0) return;
+    setShowExportModal(true);
+  };
+
+  const handleConfirmExport = () => {
+    setShowExportModal(false);
     if (!assets || assets.length === 0) {
-      console.warn("No assets available to export.");
       return;
     }
 
@@ -176,6 +183,14 @@ function App() {
         isSelectionMode={isSelectionMode}
         setIsSelectionMode={setIsSelectionMode}
         onDeleteSelected={handleBulkDelete}
+      />
+
+      {/* --- EXPORT MODAL (CONDITIONALLY SHOWN) --- */}
+      <ExportModal
+        isOpen={showExportModal}
+        assetCount={assets.length}
+        onConfirm={handleConfirmExport}
+        onClose={() => setShowExportModal(false)}
       />
 
       {/* --- CSV UPLOADER (CONDITIONALLY SHOWN) --- */}

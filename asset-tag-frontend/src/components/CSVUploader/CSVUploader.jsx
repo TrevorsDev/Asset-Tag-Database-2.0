@@ -191,7 +191,7 @@ const CSVUploader = ({ onDataParsed, externalError, clearExternalError, onClose 
         {/* HEADER */}
         <div className="csv-modal__header">
           <h3 className="csv-modal__title">Upload CSV</h3>
-          <button className="icon-button focus-ring--action" onClick={onClose} aria-label="Close">
+          <button className="modal-close-btn focus-ring--action" onClick={onClose} aria-label="Close">
             <X />
           </button>
         </div>

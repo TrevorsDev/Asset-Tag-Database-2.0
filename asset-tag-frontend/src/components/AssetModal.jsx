@@ -103,7 +103,7 @@ const AssetModal = ({ asset, isOpen, onClose, onSave, error }) => {
                     <h3 className="asset-modal__title">
                         {asset.id ? `Edit Asset: ${asset.asset_tag}` : 'Add Asset'}
                     </h3>
-                    <button className="icon-button" onClick={onClose} aria-label="Close">
+                    <button className="modal-close-btn focus-ring--action" onClick={onClose} aria-label="Close">
                         <X />
                     </button>
                 </div>
