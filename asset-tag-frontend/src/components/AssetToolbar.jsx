@@ -1,69 +1,50 @@
-import { useRef } from 'react';
 import SearchBar from './SearchBar';
-import CSVUploader from './CSVUploader/CSVUploader'; // Make sure this path is correct
 import './AssetToolbar.css';
 
 function AssetToolbar({
     onAddAsset,
-    onExportCSV,     // NEW: export handler (even if placeholder)
+    onExportCSV,
     searchQuery,
     setSearchQuery,
+    onUploadCSV,
 }) {
-
-    // Ref to control the CSVUploader from the toolbar
-    const csvUploaderRef = useRef(null);
-
     return (
-        <>
-            {/* Floating Glass Toolbar */}
-            <div className="floating-toolbar">
+        <div className="floating-toolbar">
 
-                {/* LEFT SIDE ACTIONS */}
-                <div className="toolbar-actions">
+            {/* LEFT — Action buttons */}
+            <div className="toolbar-actions">
+                <button
+                    className="toolbar-btn toolbar-btn--primary focus-ring--action"
+                    onClick={onUploadCSV}
+                >
+                    Upload CSV
+                </button>
 
-                    {/* Upload CSV (Primary) */}
-                    <button
-                        className="primary-action"
-                        onClick={() => csvUploaderRef.current?.openFilePicker()}
-                    >
-                        Upload CSV
-                    </button>
+                <button
+                    className="toolbar-btn toolbar-btn--ghost focus-ring--action"
+                    onClick={onExportCSV}
+                >
+                    Export CSV
+                </button>
 
-                    {/* Export CSV (Secondary) */}
-                    <button
-                        className="secondary-action"
-                        onClick={onExportCSV}
-                    >
-                        Export CSV
-                    </button>
-
-                    {/* Add Asset (Secondary) */}
-                    <button
-                        className="third-action"
-                        onClick={onAddAsset}
-                    >
-                        + Add Asset
-                    </button>
-                </div>
-
-                {/* RIGHT SIDE SEARCH */}
-                <div className="toolbar-search">
-                    <SearchBar
-                        value={searchQuery}
-                        onChange={setSearchQuery}
-                    />
-                </div>
+                <button
+                    className="toolbar-btn toolbar-btn--ghost focus-ring--action"
+                    onClick={onAddAsset}
+                >
+                    + Add Asset
+                </button>
             </div>
 
-            {/* Hidden CSV Uploader Component */}
-            <CSVUploader
-                ref={csvUploaderRef}
-                onDataParsed={(data) => console.log("Parsed CSV:", data)}
-            />
-        </>
+            {/* RIGHT — Search */}
+            <div className="toolbar-search">
+                <SearchBar
+                    value={searchQuery}
+                    onChange={setSearchQuery}
+                />
+            </div>
+
+        </div>
     );
 }
 
 export default AssetToolbar;
-
-

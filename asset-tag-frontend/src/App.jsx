@@ -6,12 +6,13 @@
 // Passes that list to AssetTable
 // Passes the addAsset() function to AssetForm
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import AssetToolbar from './components/AssetToolbar.jsx';
 import AssetTable from './components/AssetTable';
-import AssetModal from './components/AssetModal.jsx'
+import AssetModal from './components/AssetModal.jsx';
 import CSVUploader from './components/CSVUploader/CSVUploader.jsx';
+import ConfirmDialog from './components/ConfirmDialog.jsx';
 
 import useAssets from './hooks/useAssets.js';
 import BulkDeleteBanner from './components/BulkDeleteBanner.jsx';
@@ -76,7 +77,56 @@ function App() {
     setShowCSVUploader(false);
   };
 
-  // --- 6. FILTER ASSETS BASED ON SEARCH QUERY ---
+  // EXPORT FILE HANDLER
+  const handleExportCSV = () => {
+    if (!assets || assets.length === 0) {
+      console.warn("No assets available to export.");
+      return;
+    }
+
+    // Define the columns you want in the CSV
+    const headers = [
+      "asset_tag",
+      "serial_number",
+      "model",
+      "status",
+      "department",
+      "pr",
+      "po",
+      "notes"
+    ];
+
+    // 6. Convert to CSV format
+    const csvRows = [];
+
+    // Header row
+    csvRows.push(headers.join(","));
+
+    // Data rows
+    assets.forEach(asset => {
+      const row = headers.map(h => {
+        const value = asset[h] ?? "";
+        // Escape quotes
+        return `"${String(value).replace(/"/g, '""')}"`;
+      });
+      csvRows.push(row.join(","));
+    });
+
+    const csvString = csvRows.join("\n");
+
+    // Trigger browser download
+    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "pima_assets_exports.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // --- 7. FILTER ASSETS BASED ON SEARCH QUERY ---
   const filteredAssets = assets.filter((asset) => {
     const tokens = searchQuery.toLowerCase().split(' ').filter(Boolean);
 
@@ -87,17 +137,22 @@ function App() {
     );
   });
 
-  // --- 7. SELECTION STATE (for bulk delete) ---
+  // --- 8. SELECTION STATE (for bulk delete) ---
   const [selectedIds, setSelectedIds] = useState([]);
   const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [confirmDialog, setConfirmDialog] = useState(null); // null = closed
 
-  // --- 8. BULK DELETE HANDLER ---
+  // --- 9. BULK DELETE HANDLER ---
   const handleBulkDelete = () => {
-    if (window.confirm(`Delete ${selectedIds.length} selected assets?`)) {
-      deleteMultipleAssets(selectedIds);
-      setSelectedIds([]);
-      setIsSelectionMode(false);
-    }
+    setConfirmDialog({
+      message: `Permanently delete ${selectedIds.length} selected asset${selectedIds.length !== 1 ? 's' : ''}?`,
+      onConfirm: () => {
+        deleteMultipleAssets(selectedIds);
+        setSelectedIds([]);
+        setIsSelectionMode(false);
+        setConfirmDialog(null);
+      }
+    });
   };
 
   return (
@@ -111,8 +166,10 @@ function App() {
       <AssetToolbar
         onAddAsset={openModalForAdd}
         onUploadCSV={() => setShowCSVUploader(true)}
+        onExportCSV={handleExportCSV}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+
 
         /* --- SELECTION STATE (bulk delete) --- */
         selectedCount={selectedIds.length}
@@ -124,9 +181,10 @@ function App() {
       {/* --- CSV UPLOADER (CONDITIONALLY SHOWN) --- */}
       {showCSVUploader && (
         <CSVUploader
-          onDataParsed={handleCSVData}
-          externalError={error}
-          clearExternalError={() => setError(null)}
+          onDataParsed={handleCSVData}              // upload + close on success
+          externalError={error}                     // show errors from useAssets
+          clearExternalError={() => setError(null)} // allow CSVUploader to clear them
+          onClose={() => setShowCSVUploader(false)} // cancel / X button
         />
       )}
 
@@ -154,6 +212,14 @@ function App() {
         setSelectedIds={setSelectedIds}
         isSelectionMode={isSelectionMode}
         setIsSelectionMode={setIsSelectionMode}
+      />
+
+      {/* --- CONFIRM DIALOG (DELETE) --- */}
+      <ConfirmDialog
+        isOpen={!!confirmDialog}
+        message={confirmDialog?.message}
+        onConfirm={confirmDialog?.onConfirm}
+        onCancel={() => setConfirmDialog(null)}
       />
 
       {/* --- MODAL (ADD + EDIT) --- */}

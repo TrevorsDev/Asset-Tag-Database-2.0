@@ -22,9 +22,9 @@ function useAssets() {
     setLoading(true);
     try {
       const { data, error: fetchError } = await supabase
-      .from('assets')
-      .select('*')
-      .order('created_at', { ascending: false });
+        .from('assets')
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (fetchError) throw fetchError;
 
@@ -52,27 +52,95 @@ function useAssets() {
   const bulkUpsertAssets = async (csvData) => {
     setLoading(true);
 
-    // Maps alternate CSV column names to DB column names
+    /**
+     * Alias map:
+     * - Keys are normalized CSV headers (lowercase, underscores)
+     * - Values are your actual DB column names
+     */
     const aliasMap = {
-      'at': 'asset_tag', 'tag': 'asset_tag', 'sn': 'serial_number',
-      'dept': 'department', 'purchase request': 'pr', 'purchase_order': 'po',
-      'comments': 'notes', 'remarks': 'notes'
+      // asset tag
+      'asset_tag': 'asset_tag',
+      'asset tag': 'asset_tag',
+      'at': 'asset_tag',
+      'tag': 'asset_tag',
+
+      // serial number
+      'serial_number': 'serial_number',
+      'serial number': 'serial_number',
+      'sn': 'serial_number',
+
+      // model
+      'model': 'model',
+
+      // status
+      'status': 'status',
+
+      // department
+      'department': 'department',
+      'dept': 'department',
+
+      // purchase request
+      'purchase_request': 'pr',
+      'purchase request': 'pr',
+      'pr': 'pr',
+
+      // purchase order
+      'purchase_order': 'po',
+      'purchase order': 'po',
+      'po': 'po',
+
+      // notes / comments / remarks
+      'notes': 'notes',
+      'comments': 'notes',
+      'remarks': 'notes'
     };
 
-    const validColumns = ['asset_tag', 'serial_number', 'model', 'status', 'department', 'pr', 'po', 'notes'];
-    
-    // Normalize CSV keys -> DB column names
-    const mappedData = csvData.map(row => {
-      const newRow = {};
-      Object.keys(row).forEach(key => {
-        const cleanKey = key.toLowerCase().trim();
-        const targetKey = aliasMap[cleanKey] || cleanKey;
+    const validColumns = [
+      'asset_tag',
+      'serial_number',
+      'model',
+      'status',
+      'department',
+      'pr',
+      'po',
+      'notes'
+    ];
 
-        if (validColumns.includes(targetKey)) 
-          newRow[targetKey] = row[key];  
-      });
-      return newRow;
+    /**
+     * Map CSV rows -> DB rows
+     * - Normalize keys again defensively (in case something slipped through)
+     * - Use aliasMap to resolbe to 
+     * Ignore unknown columns
+     */
+    // Normalize CSV keys -> DB column names
+    const mappedData = csvData.map((row, rowIndex) => {
+    const newRow = {};
+
+    Object.keys(row).forEach(rawKey => {
+      if (!rawKey) return;
+
+      const normalizedKey = rawKey.toString().trim().toLowerCase().replace(/\s+/g, '_');
+      const targetKey = aliasMap[normalizedKey];
+
+      if (targetKey && validColumns.includes(targetKey)) {
+        newRow[targetKey] = row[rawKey];
+      }
     });
+
+    // Optional: log rows that end up empty (no recognized columns)
+    if (Object.keys(newRow).length === 0) {
+      console.warn(`Row ${rowIndex + 1} had no recognized columns and will be skipped`,  row);
+    }
+
+    return newRow;
+  }).filter(row => Object.keys(row).length > 0) // drop completely empty mapped rows
+
+  // If nothing mapped, stop early
+  if (mappedData.length === 0) {
+    setError('No valid asset rows were found in the CSV. Please check your headers and try again.');
+    setLoading(false);
+    throw new Error('No valid rows after mapping.');
+  }
 
     // Perform upsert
     const { error: upError } = await supabase
@@ -88,18 +156,16 @@ function useAssets() {
         setError(`Upload failed: ${upError.message}`);
       }
       // CRITICAL: We throw the error so CSVUploader knows the upload failed
-
+      setLoading(false);
       throw upError; // Important: tells CSVUploader the upload failed
-    } 
+    }
 
-    console.log("UPSERT_SUCCESSFUL");
+    // Update local state so UI updates instantly
+    setAssets(prevAssets => {
+      const incomingMap = new Map(mappedData.map(item => [item.asset_tag, item]));
 
-      // Update local state so UI updates instantly
-      setAssets(prevAssets => {
-        const incomingMap = new Map(mappedData.map(item => [item.asset_tag, item]));
-
-        // Keep old assets that were NOT overwritten
-        const filteredOldAssets = prevAssets.filter(asset => !incomingMap.has(asset.asset_tag)
+      // Keep old assets that were NOT overwritten
+      const filteredOldAssets = prevAssets.filter(asset => !incomingMap.has(asset.asset_tag)
       );
 
       // New/updated assets first, then old ones
@@ -150,7 +216,7 @@ function useAssets() {
       setError(updateError.message);
       setLoading(false);
       return false;
-    } 
+    }
 
     await loadData();
     return true;
@@ -161,14 +227,14 @@ function useAssets() {
   }, []);
 
   return {
-    assets, 
-    loading, 
-    error, 
+    assets,
+    loading,
+    error,
     setError,
     addAsset,
-    bulkUpsertAssets, 
-    deleteAsset, 
-    deleteMultipleAssets, 
+    bulkUpsertAssets,
+    deleteAsset,
+    deleteMultipleAssets,
     updateAsset
   };
 }

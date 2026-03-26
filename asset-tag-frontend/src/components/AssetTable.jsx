@@ -8,8 +8,9 @@ This component displays a table of asset data.
 - Handle the “no assets” and “loading” states 
 */
 
-import React, { useState } from 'react';
-import { Trash2, Pencil } from 'lucide-react'; // Imports Trash icon
+import { useState } from 'react';
+import { Trash2, Pencil } from 'lucide-react';
+import ConfirmDialog from './ConfirmDialog';
 import './AssetTable.css'
 import '../App.css'
 
@@ -29,13 +30,16 @@ const AssetTable = ({
 }) => {
 
   // --- 1. DATA & STATE ---
-  // Handles individual deletion
+  const [confirmDialog, setConfirmDialog] = useState(null); // null = closed
 
   const handleDeleteClick = (id, assetTag) => {
-    const confirmed = window.confirm(`Permanently delete asset ${assetTag}?`);
-    if (confirmed) {
-      deleteAsset(id);
-    }
+    setConfirmDialog({
+      message: `Permanently delete asset ${assetTag}?`,
+      onConfirm: () => {
+        deleteAsset(id);
+        setConfirmDialog(null);
+      }
+    });
   };
 
   // Handles checkbox selection logic
@@ -53,6 +57,7 @@ const AssetTable = ({
 
   // Render the table
   return (
+    <>
     <div className="asset-table-container">
 
       <table className="asset-table">
@@ -116,14 +121,14 @@ const AssetTable = ({
 
                 <div className={"asset-table__actions-container"}>
                   <button
-                    className="icon-button icon-button--trash"
+                    className="icon-button icon-button--trash focus-ring--danger"
                     onClick={() => handleDeleteClick(asset.id, asset.asset_tag)}
                   >
                     <Trash2 />
                   </button>
 
                   <button
-                    className="icon-button icon-button--edit"
+                    className="icon-button icon-button--edit focus-ring--action"
                     onClick={() => onEdit(asset)}
                   >
                     <Pencil />
@@ -136,6 +141,14 @@ const AssetTable = ({
       </table>
 
     </div>
+
+      <ConfirmDialog
+        isOpen={!!confirmDialog}
+        message={confirmDialog?.message}
+        onConfirm={confirmDialog?.onConfirm}
+        onCancel={() => setConfirmDialog(null)}
+      />
+    </>
   );
 }
 // Export the component so it can be used in other files

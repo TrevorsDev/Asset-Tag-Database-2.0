@@ -19,7 +19,7 @@ CREATE TABLE assets (
 
 -- Unique constraints. Makes sure theres never two of the same asset tags or serial numbers in those columns
 ALTER TABLE assets ADD CONSTRAINT unique_asset_tag UNIQUE (asset_tag);
-ALTER TABL assets ADD CONSTRAINT unique_serial_number UNIQUE (serial_number);
+ALTER TABLE assets ADD CONSTRAINT unique_serial_number UNIQUE (serial_number);
 
 -- indexes
 CREATE INDEX idx_asset_tag ON assets(asset_tag);

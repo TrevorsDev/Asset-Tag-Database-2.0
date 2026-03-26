@@ -1,56 +1,69 @@
-/* Base layer — variables and base button styles */
-/* In a professional architecture, we categorize feedback colors into Base (the core color), Surface (the translucent background), and Border. */
+/* ==========================================================================
+   App.css — Single source of truth for global styles.
 
+   Layer order (lowest → highest priority):
+   1. @layer base      — tokens, resets, body, base element styles
+   2. @layer components — reusable UI patterns (buttons, etc.)
+   3. @layer utility   — single-purpose layout helpers
+   4. (unlayered)      — focus rings; must beat everything, placed at bottom
+   ========================================================================== */
+
+
+/* ==========================================================================
+   LAYER 1: BASE
+   ========================================================================== */
 @layer base {
     :root {
         /* --- SURFACE & BACKGROUNDS --- */
-        --color-bg-main: #0f172a;
-        /* Deep Navy/Slate */
-        --color-bg-surface: #1e293b;
-        /* Lighter Slate for cards/modals */
-        --color-border-subtle: #334155;
-        /* Soft slate border */
+        --color-bg-main: #0f172a;          /* Deep Navy/Slate */
+        --color-bg-surface: #1e293b;       /* Lighter Slate for cards/modals */
+        --color-border-subtle: #334155;    /* Soft slate border */
 
         /* --- BRAND & ACTION COLORS --- */
-        --color-action-primary: #3b82f6;
-        /* Blue 500 */
-        --color-action-hover: #2563eb;
-        /* Blue 600 */
+        --color-action-primary: #3b82f6;   /* Blue 500 */
+        --color-action-hover: #2563eb;     /* Blue 600 */
         --color-action-focus: rgba(59, 130, 246, 0.6);
         --color-action-tint: rgba(59, 130, 246, 0.12);
+        --color-action-edit: #3b82f6;      /* Vivid Blue */
 
+        /* --- STATUS & FEEDBACK --- */
+        --color-status-danger: #ef4444;    /* Rose Red */
+        --color-status-danger-max: #f59e0b; /* Amber */
 
-        /* Accesnts: For Edits */
-        --color-action-edit: #3b82f6;
-        /* Vivid Blue */
-
-        /* --- STATUS & FEEDBACK ---*/
-        --color-status-danger: #ef4444;
-        /* Rose Red */
-        --color-status-danger-max: #f59e0b;
-        /* Amber */
-
-        /* Error Variants */
-        /* Using a 15% opacity version of the red for the background */
+        /* Error variants */
         --color-error-bg: rgba(239, 68, 68, 0.15);
-        /* A slightly brighter red for the border to make it "pop" */
         --color-error-border: rgba(239, 68, 68, 0.5);
-        /* High contrast text for readability */
         --color-error-text: #fca5a5;
 
-        --color-success-border: rgba(16, 185, 129, 0.5);
-
+        /* Success variants */
         --color-success-bg: rgba(16, 185, 129, 0.15);
+        --color-success-border: rgba(16, 185, 129, 0.5);
+        --color-success-text: #bbf7d0;
 
-        /* --- UI Helpers --- */
+        /* --- UI HELPERS --- */
         --radius-md: 6px;
 
         /* --- TYPOGRAPHY --- */
-        --color-text-main: #f8fafc;
-        /* Off-white (Slate 50) */
-        --color-text-muted: #94a3b8;
-        /* Muted Blue-Gray */
-        --color-success-text: #bbf7d0;
+        --color-text-main: #f8fafc;        /* Off-white (Slate 50) */
+        --color-text-muted: #94a3b8;       /* Muted Blue-Gray */
+        --font-weight-normal: 400;
+        --font-weight-medium: 500;
+    }
+
+    /* Browser reset + font rendering (migrated from index.css) */
+    body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100vh;
+        font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+        line-height: 1.5;
+        font-weight: var(--font-weight-normal);
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: var(--color-bg-main);
+        color: var(--color-text-main);
     }
 
     .global-btn {
@@ -62,7 +75,78 @@
     }
 }
 
-/* HEADER STYLING */
+
+/* ==========================================================================
+   LAYER 2: COMPONENTS
+   ========================================================================== */
+@layer components {
+    .primary-btn {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        font-weight: var(--font-weight-medium);
+        color: var(--color-text-main);
+        background-color: var(--color-action-primary);
+    }
+
+    .secondary-btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.90rem;
+        font-weight: var(--font-weight-normal);
+        color: var(--color-text-main);
+        background-color: var(--color-bg-surface);
+    }
+
+    .global-btn:hover {
+        background-color: var(--color-action-hover);
+        border: transparent;
+        outline: none;
+    }
+
+    .global-btn:focus:not(:focus-visible),
+    .global-btn:active {
+        outline: none;
+        border: none;
+    }
+
+    .global-btn:focus-visible {
+        outline: none;
+    }
+}
+
+
+/* ==========================================================================
+   LAYER 3: UTILITY
+   ========================================================================== */
+@layer utility {
+    .u-center-block {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .u-flex-center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .u-text-center {
+        text-align: center;
+    }
+
+    .u-mx-auto {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .u-hidden {
+        display: none;
+    }
+}
+
+
+/* ==========================================================================
+   PAGE LAYOUT (unlayered — applies globally above all layers)
+   ========================================================================== */
 .page-header {
     text-align: center;
     margin-bottom: 1.5rem;
@@ -81,76 +165,25 @@
 }
 
 
-/* Components layer — specific button variants */
-@layer components {
-    .primary-btn {
-        padding: 0.75rem 1rem;
-        font-size: 1rem;
-        font-weight: var(--font-weight-medium);
-        color: var(--color-text-main);
-        background-color: var(--color-action-primary);
-    }
+/* ==========================================================================
+   FOCUS RINGS (unlayered — must win over everything, including index.css)
 
-    .secondary-btn {
-        padding: 0.5rem .75rem;
-        font-size: .90rem;
-        font-weight: var(--font-weight-normal);
-        color: var(--primary-font-color);
-        background-color: var(--btn-color-primary);
-    }
+   Two variants map to the app's two semantic color roles:
+   - focus-ring--action  → blue glow  (neutral / edit interactions)
+   - focus-ring--danger  → red glow   (destructive interactions)
 
-    .global-btn:active,
-    .global-btn:hover {
-        background-color: var(--color-action-hover);
-        border: transparent;
-        outline: none;
-    }
-
-    /* Remove default focus ring when :focus-visible should not apply */
-    .global-btn:focus:not(:focus-visible),
-    .global-btn:active {
-        outline: none;
-        border: none;
-    }
-
-    .global-btn:focus-visible {
-        outline-offset: 1px;
-    }
-
-    /* Utility layer  */
-    @layer utility {
-        .u-center-block {
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .u-flex-center {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .u-text-center {
-            text-align: center;
-        }
-
-        .u-mx-auto {
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .u-hidden {
-            display: none;
-        }
-    }
-
+   Applied as a utility class in JSX alongside the element's own classes.
+   ========================================================================== */
+.focus-ring--action:focus-visible {
+    outline: none;
+    border: 1px solid var(--color-action-edit);
+    box-shadow: 0 0 10px var(--color-action-edit);
+    transition: box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
-
-/* Using @layer:
-
-- Styles in utilities override components, even with lower specificity
-- Solves "selector wars" and makes CSS more predictable
-- Supported in all modern browsers since 2022
-
-*/
+.focus-ring--danger:focus-visible {
+    outline: none;
+    border: 1px solid var(--color-status-danger);
+    box-shadow: 0 0 10px var(--color-status-danger);
+    transition: box-shadow 0.18s ease, border-color 0.18s ease;
+}
