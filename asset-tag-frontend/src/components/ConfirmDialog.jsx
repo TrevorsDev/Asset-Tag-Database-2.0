@@ -51,13 +51,13 @@ const ConfirmDialog = ({
 
                 <div className="confirm-dialog__actions u-flex-center">
                     <button
-                        className="global-btn confirm-dialog__btn--cancel focus-ring--action"
+                        className="global-btn secondary-btn focus-ring--action"
                         onClick={onCancel}
                     >
                         Cancel
                     </button>
                     <button
-                        className="global-btn confirm-dialog__btn--confirm focus-ring--danger"
+                        className="global-btn danger-btn focus-ring--danger"
                         onClick={onConfirm}
                     >
                         {confirmLabel}

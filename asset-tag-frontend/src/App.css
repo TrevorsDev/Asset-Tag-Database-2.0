@@ -90,11 +90,29 @@
     }
 
     .secondary-btn {
-        padding: 0.5rem 0.75rem;
-        font-size: 0.90rem;
+        padding: 0.6rem 1.25rem;
+        font-size: 0.9rem;
         font-weight: var(--font-weight-normal);
         color: var(--color-text-main);
         background-color: var(--color-bg-surface);
+        border: 1px solid var(--color-border-subtle);
+    }
+
+    .secondary-btn:hover {
+        background-color: var(--color-border-subtle);
+    }
+
+    .danger-btn {
+        padding: 0.6rem 1.25rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #fff;
+        background-color: var(--color-status-danger);
+        border: 1px solid transparent; /* prevents layout shift on focus */
+    }
+
+    .danger-btn:hover {
+        background-color: #dc2626;
     }
 
     .global-btn:hover {
