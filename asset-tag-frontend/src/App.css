@@ -15,20 +15,28 @@
 @layer base {
     :root {
         /* --- SURFACE & BACKGROUNDS --- */
-        --color-bg-main: #0f172a;          /* Deep Navy/Slate */
-        --color-bg-surface: #1e293b;       /* Lighter Slate for cards/modals */
-        --color-border-subtle: #334155;    /* Soft slate border */
+        --color-bg-main: #0f172a;
+        /* Deep Navy/Slate */
+        --color-bg-surface: #1e293b;
+        /* Lighter Slate for cards/modals */
+        --color-border-subtle: #334155;
+        /* Soft slate border */
 
         /* --- BRAND & ACTION COLORS --- */
-        --color-action-primary: #3b82f6;   /* Blue 500 */
-        --color-action-hover: #2563eb;     /* Blue 600 */
+        --color-action-primary: #3b82f6;
+        /* Blue 500 */
+        --color-action-hover: #2563eb;
+        /* Blue 600 */
         --color-action-focus: rgba(59, 130, 246, 0.6);
         --color-action-tint: rgba(59, 130, 246, 0.12);
-        --color-action-edit: #3b82f6;      /* Vivid Blue */
+        --color-action-edit: #3b82f6;
+        /* Vivid Blue */
 
         /* --- STATUS & FEEDBACK --- */
-        --color-status-danger: #ef4444;    /* Rose Red */
-        --color-status-danger-max: #f59e0b; /* Amber */
+        --color-status-danger: #ef4444;
+        /* Rose Red */
+        --color-status-danger-max: #f59e0b;
+        /* Amber */
 
         /* Error variants */
         --color-error-bg: rgba(239, 68, 68, 0.15);
@@ -45,8 +53,10 @@
         --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.4);
 
         /* --- TYPOGRAPHY --- */
-        --color-text-main: #f8fafc;        /* Off-white (Slate 50) */
-        --color-text-muted: #94a3b8;       /* Muted Blue-Gray */
+        --color-text-main: #f8fafc;
+        /* Off-white (Slate 50) */
+        --color-text-muted: #94a3b8;
+        /* Muted Blue-Gray */
         --font-weight-normal: 400;
         --font-weight-medium: 500;
     }
@@ -81,6 +91,7 @@
    LAYER 2: COMPONENTS
    ========================================================================== */
 @layer components {
+
     /* Base hover — variants below override this */
     .global-btn:hover {
         background-color: var(--color-action-hover);
@@ -122,7 +133,8 @@
         font-weight: 600;
         color: #fff;
         background-color: var(--color-status-danger);
-        border: 1px solid transparent; /* prevents layout shift on focus */
+        border: 1px solid transparent;
+        /* prevents layout shift on focus */
     }
 
     .danger-btn:hover {
@@ -241,6 +253,8 @@
    Applied as a utility class in JSX alongside the element's own classes.
    ========================================================================== */
 .focus-ring--action:focus-visible {
+    color: var(--color-text-main);
+    text-shadow: 0 0 10px var(--color-action-edit);
     outline: none;
     border: 1px solid var(--color-action-edit);
     box-shadow: 0 0 10px var(--color-action-edit);
