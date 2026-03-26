@@ -1,122 +1,152 @@
-# Improvements for Future Iterations
+# Future Improvements
 
-This document outlines deeper architectural plans, technical enhancements, and long-term improvements for the Asset Tag Database project. These items go beyond the MVP and reflect enterprise-level engineering goals.
+This document outlines deeper architectural plans, technical enhancements, and long-term improvements for the Asset Tag Database project. Items marked ✅ are complete in v1.0.
 
 ---
 
-## 🏗️ App Architecture
+## App Architecture
 
-### 🔄 Switch from Props to React Context
-- Reduce prop drilling as the app grows
-- Centralize shared state (filters, assets, auth)
-- Cleaner architecture for large systems
+### ✅ Custom Hooks & Modularization
+- `useAssets.js` handles all Supabase CRUD operations as a dedicated data access layer
+- `validation.js` extracted as a standalone utility module
+- CSV parsing handled inside `CSVUploader` component
 
-### 🧩 Custom Hooks & Modularization
-- Move filtering logic into a dedicated custom hook
-- Extract CSV parser into its own utility module
-- Add a dedicated hook for asset CRUD operations
-- Add a hook for authentication and session management
+### React Context Migration
+- Replace prop drilling with React Context as the component tree grows
+- Centralize shared state (assets, filters, auth session)
+- `App.jsx` is the natural starting point — all state already lives there, migration is mechanical
 
-### ⎍ Data Table
-- Migrate the AssetTable from a traditional HTML ``` <table>``` to a CSS Grid–driven layout to unlock modern interaction patterns (hover‑activated controls, animated columns, responsive resizing), improve long‑term scalability, and enable virtualization for large datasets.
+### Data Table Virtualization
+- Migrate `AssetTable` to a virtualized list (e.g., TanStack Virtual or `react-window`) for datasets of 10,000+ rows
+- Current HTML `<table>` works well for hundreds of rows but will degrade at scale
 
-### 🧪 Type Safety & Testing
+### Type Safety & Testing
 - Add PropTypes or migrate to TypeScript
-- Add unit tests for filters, CSV parsing, and form validation
-- Add integration tests for upload and edit workflows
+- Unit tests for `validation.js`, CSV parsing logic, and form submission
+- Integration tests for upload and edit workflows
 
 ---
 
-## 🔎 Search Enhancements
+## Search & Filtering
 
-- Implement server‑side search with row virtualization (e.g., react‑window or TanStack Virtual) to ensure sub‑millisecond filtering and smooth rendering of large datasets (15k+ assets) while maintaining responsive UI performance.
-- Debounced text input to improve performance
-- Empty-state messaging (“No assets match your search”)
-- Add pagination or infinite scroll for large datasets
-
----
-
-## 📝 CSV File Uploading
-
-### Parsing & Validation
-- Add preview table (first 5-10 rows) before submitting CSV data
-- Add row-level error reporting (line numbers, conflicting serial numbers)
-- Add schema validation (required columns, type checking)
-- Auto-column detection using SQL `information_schema`
-- Add drag-and-drop upload zone
-- Add upload progress bar
-- Better empty-state messaging
-    - "No file selected"
-    - "Upload a CSV to begin"
-
-### Backend Integration
-- Support uploading parsed data to SQL Server (v2.0)
-- Add server-side validation for malformed rows
-- Add audit logging for bulk imports
+- Debounced search input to reduce re-renders on fast typing
+- Server-side search for large datasets (currently client-side filtered)
+- Empty-state messaging ("No assets match your search")
+- Column-specific filtering (filter by department, status, etc.)
+- Pagination or infinite scroll for large datasets
 
 ---
 
-## 📤 CSV File Exporting
+## Feedback & Notifications
 
-- Add “Download Report” button
-- Export filtered results
-- Export full dataset
-- Support CSV and Excel formats
-- Add scheduled exports for finance teams
+### Toast Notifications (next up)
+- Success toast for: add asset, edit asset, delete, bulk delete, CSV upload, CSV export
+- Slides up from bottom center, auto-dismisses after 3 seconds
+- Error stays inline in context (modal or banner) — only success gets a toast
 
----
-
-## ✏️ Editing & Asset Management
-
-- Inline validation for edit modal fields
-- Prevent accidental modal close when form is dirty
-- Add toast notifications (“Asset updated successfully”)
-- Add bulk delete or bulk update actions
-- Add audit logging for edits and deletes
+### Duplicate Detection (next up)
+- Pre-flight validation against local assets array before calling Supabase
+- Show exactly which asset tag or serial number conflicts and which existing record owns it
+- Example: "Serial number SN-JKL32122 is already assigned to AT-3000143"
 
 ---
 
-## 🎨 UI/UX Improvements
+## CSV Import
 
-- Standardize button styles across the app
-- Add dark mode
-- Improve mobile responsiveness
-- Add loading spinners and skeleton states
-- Add empty-state illustrations or messaging
+### ✅ Completed in v1.0
+- Drag-and-drop upload zone
+- Preview table before committing data
+- PapaParse integration with `transformHeader` column normalization
+- Error handling for invalid file types, empty CSVs, and database constraint violations
 
----
-
-## 🛡️ Security & Authentication
-
-- Add Supabase Auth (email/password or OAuth)
-- Add role-based access control (Admin vs Read-Only)
-- Add protected routes and session persistence
-- Add password reset and email verification flows
+### Remaining
+- Row-level error reporting (line numbers for failed rows)
+- Upload progress indicator for large files
+- Schema validation (required columns, type checking)
+- Audit logging for bulk imports
 
 ---
 
-## 🗄️ MS SQL Server Migration (Version 2.0)
+## CSV Export
+
+### ✅ Completed in v1.0
+- Export confirmation modal showing record count, filename, and columns
+- Full dataset download as `.csv`
+
+### Remaining
+- Export filtered results only (respects current search)
+- Excel format support (`.xlsx`)
+- Scheduled exports for finance or management reporting
+
+---
+
+## Asset Management
+
+### ✅ Completed in v1.0
+- Inline validation for add/edit modal fields
+- Bulk delete with checkbox selection and sticky confirmation banner
+- `ConfirmDialog` component replaces all `window.confirm()` calls
+- Smooth animated bulk-delete banner that auto-dismisses when unchecked
+
+### Remaining
+- Prevent accidental modal close when form has unsaved changes
+- Bulk update (change status or department across multiple assets at once)
+- Audit logging for edits and deletes (who changed what and when)
+- Asset history / change log view per record
+
+---
+
+## UI/UX
+
+### ✅ Completed in v1.0
+- Dark theme with blue-slate design tokens
+- Standardized button variants (`primary-btn`, `secondary-btn`, `danger-btn`)
+- Global focus ring system (`focus-ring--action`, `focus-ring--danger`)
+- Consistent modal close button (`modal-close-btn`) across all modals
+- Sticky bulk-delete banner with smooth CSS transition animation
+
+### Remaining
+- Loading skeletons or spinners during Supabase fetch
+- Empty-state illustration or message when no assets exist
+- Mobile responsiveness pass
+- Keyboard navigation improvements (trap focus inside modals)
+
+---
+
+## Security & Authentication
+
+- Supabase Auth (email/password or OAuth)
+- Role-based access control: Admin (full CRUD) vs Read-Only (view and export only)
+- Protected routes and session persistence
+- Password reset and email verification flows
+- Re-enable RLS policies (currently disabled for public demo)
+
+---
+
+## MS SQL Server Migration (v2.0)
 
 - Migrate database from Supabase (PostgreSQL) to MS SQL Server
-- Maintain identical UI and frontend logic
-- Update backend queries and upsert logic
-- Add stored procedures for enterprise workflows
-- Add SQL triggers for trimming and data normalization
+- Build a Node/Express REST API layer between the frontend and MSSQL
+- Replace Supabase client calls in `useAssets.js` with `fetch()` calls to the API — frontend components unchanged
+- Add stored procedures for upsert and bulk operations
+- Add SQL triggers for data normalization and audit logging
+- This is the primary requirement for enterprise/government deployment
 
 ---
 
-## 📊 Reporting & Analytics
+## Reporting & Analytics
 
-- Add dashboards (assets by department, lifecycle status)
-- Add charts (Pie, Bar, Line)
-- Add exportable PDF reports
-- Add scheduled email reports
+- Department breakdown (assets per department, pie/bar chart)
+- Asset lifecycle status dashboard (active vs inactive vs retired)
+- Exportable PDF reports
+- Scheduled email reports for management
 
 ---
 
-## 🧭 Deployment & Monitoring
+## Deployment & Reliability
 
-- Deploy MVP to production (Netlify, Vercel, or Supabase)
-- Add environment variable management
-- Add error boundaries for production safety
-- Add logging and monitoring (Sentry, Supabase logs)
+- ✅ Deployed to Vercel
+- Error boundaries to prevent full-page crashes in production
+- Environment variable audit (ensure no keys exposed client-side)
+- Logging and monitoring (Sentry or similar)
+- CI/CD pipeline (auto-deploy on merge to main)
