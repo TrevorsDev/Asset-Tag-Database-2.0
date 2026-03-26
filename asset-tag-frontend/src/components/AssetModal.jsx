@@ -92,7 +92,7 @@ const AssetModal = ({ asset, isOpen, onClose, onSave, error }) => {
     const friendlyError = getErrorMessage(error);
 
     return (
-        <div className="asset-modal__overlay" onClick={onClose}>
+        <div className="asset-modal__overlay u-overlay u-flex-center" onClick={onClose}>
             <div
                 className="asset-modal__container"
                 onClick={(e) => e.stopPropagation()}

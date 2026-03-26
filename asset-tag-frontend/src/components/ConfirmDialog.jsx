@@ -31,7 +31,7 @@ const ConfirmDialog = ({
     if (!isOpen) return null;
 
     return (
-        <div className="confirm-dialog__overlay u-flex-center" onClick={onCancel}>
+        <div className="confirm-dialog__overlay u-overlay u-flex-center" onClick={onCancel}>
             <div
                 className="confirm-dialog__container u-text-center"
                 onClick={(e) => e.stopPropagation()}

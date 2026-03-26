@@ -42,6 +42,7 @@
 
         /* --- UI HELPERS --- */
         --radius-md: 6px;
+        --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.4);
 
         /* --- TYPOGRAPHY --- */
         --color-text-main: #f8fafc;        /* Off-white (Slate 50) */
@@ -140,6 +141,23 @@
 
     .u-hidden {
         display: none;
+    }
+
+    /* Full-screen fixed overlay — used by all modals */
+    .u-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Column-direction flex centering */
+    .u-flex-col-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 }
 

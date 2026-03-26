@@ -1,57 +1,189 @@
-.csv-uploader-container {
-  padding: 20px;
-  /* border: 1px dashed #ccc; */
-  border-radius: 8px;
-  margin: 20px 0;
-  /* background-color: #fafafa; */
-  text-align: center;
+/* ==========================================================================
+   BLOCK: CSV Upload Modal
+   ========================================================================== */
+.csv-modal-overlay {
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+  /* Positioning + centering handled by u-overlay u-flex-center in JSX */
 }
 
-/* Making the input focusable but visually invisable  */
-.hidden-file-input {
+.csv-modal {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-modal);
+  width: 90%;
+  max-width: 680px;
+  max-height: 85vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.75rem;
+}
+
+/* ==========================================================================
+   ELEMENT: Header
+   ========================================================================== */
+.csv-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border-subtle);
+  padding-bottom: 1rem;
+}
+
+.csv-modal__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+/* ==========================================================================
+   ELEMENT: Drop Zone — State 1 (no file selected)
+   ========================================================================== */
+.csv-drop-zone {
+  padding: 2.5rem 1.5rem;
+  border: 1.5px dashed var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  text-align: center;
+  /* Column centering handled by u-flex-col-center in JSX */
+}
+
+.csv-drop-zone:hover {
+  border-color: var(--color-action-primary);
+  background-color: var(--color-action-tint);
+}
+
+.csv-drop-zone--active {
+  border-color: var(--color-action-primary);
+  background-color: var(--color-action-tint);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.csv-hidden-input {
   position: absolute;
   width: 1px;
   height: 1px;
   margin: -1px;
   overflow: hidden;
-  clip: rect(0,0,0,0);
+  clip: rect(0, 0, 0, 0);
   border: 0;
 }
 
-/* Style the label when the input is focused on. Accessability forward */
-.hidden-file-input:focus-visible + .upload-label {
-  outline: 1px solid var(--color-danger);
-  background-color: var(--hover-background-color);
+.csv-drop-zone__icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--color-action-primary);
+  margin-bottom: 0.25rem;
 }
 
-.upload-preview-box {
-  margin-top: 15px;
-  padding: 15px;
-  background-color: transparent;
-  border-radius: 4px;
+.csv-drop-zone__primary {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-main);
 }
 
-/* Confirm button styling and animation. Targeting the parent container's class first ensures that this styling is prioritized over global styling */
-.upload-preview-box .confirm-btn {
-  background-color: #28a745;
-  color: white;
-  margin-right: 2rem;
+.csv-drop-zone__secondary {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
 }
 
-.upload-preview-box .confirm-btn:hover {
-  background-color: var(--color-action-hover);
-  /* transition: .5s; */
+.csv-drop-zone__link {
+  color: var(--color-action-primary);
+  text-decoration: underline;
+  cursor: pointer;
 }
 
-.upload-preview-box .cancel-btn {
-  background-color: var(--color-status-danger);
-  color: white;
+.csv-drop-zone__hint {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
 }
 
-.upload-preview-box .cancel-btn:hover {
-  background-color:  var(--color-status-danger-max);;
-  /* transition: .5s; */
+.csv-drop-zone__hint-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
 }
 
+/* ==========================================================================
+   ELEMENT: Preview — State 2 (file parsed, awaiting confirmation)
+   ========================================================================== */
+.csv-preview-box {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
 
+.csv-preview-text {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
 
+.csv-preview-table-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.csv-preview-table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.csv-preview-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.csv-preview-table th {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--color-border-subtle);
+  white-space: nowrap;
+}
+
+.csv-preview-table td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  color: var(--color-text-main);
+  border-bottom: 1px solid var(--color-border-subtle);
+  white-space: nowrap;
+}
+
+.csv-preview-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.csv-preview-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.csv-preview-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
