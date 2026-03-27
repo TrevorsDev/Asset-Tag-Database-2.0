@@ -23,7 +23,7 @@ const getErrorMessage = (errorText) => {
     return key ? errorMapping[key] : errorText;
 };
 
-const AssetModal = ({ asset, isOpen, onClose, onSave, error }) => {
+const AssetModal = ({ asset, isOpen, onClose, onSave, error, assets = [] }) => {
     // 1. LOCAL STATE: Copy asset data into local form state so edits don't
     //    immediately affect the table behind the modal.
     const [formData, setFormData] = useState({ ...asset });
@@ -84,9 +84,24 @@ const AssetModal = ({ asset, isOpen, onClose, onSave, error }) => {
             return;
         }
 
-        // 3. SAVE: Only reached if validation passes
-        const actualId = asset.id || asset.ID;
-        onSave(actualId, cleanedData);
+        // 3. DUPLICATE CHECK: Client-side pre-flight against existing assets
+        const currentId = asset.id || asset.ID;
+        const conflicts = {};
+
+        const tagConflict = assets.find(a => a.asset_tag === cleanedData.asset_tag && a.id !== currentId);
+        if (tagConflict) conflicts.asset_tag = `Already assigned to serial ${tagConflict.serial_number}`;
+
+        const serialConflict = assets.find(a => a.serial_number === cleanedData.serial_number && a.id !== currentId);
+        if (serialConflict) conflicts.serial_number = `Already assigned to ${serialConflict.asset_tag}`;
+
+        if (Object.keys(conflicts).length > 0) {
+            setHasAttemptedSubmit(true);
+            setFieldErrors(conflicts);
+            return;
+        }
+
+        // 4. SAVE: Only reached if validation and duplicate check pass
+        onSave(currentId, cleanedData);
     };
 
     const friendlyError = getErrorMessage(error);

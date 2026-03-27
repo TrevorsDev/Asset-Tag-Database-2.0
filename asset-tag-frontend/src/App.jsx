@@ -212,6 +212,7 @@ function App() {
           externalError={error}                     // show errors from useAssets
           clearExternalError={() => setError(null)} // allow CSVUploader to clear them
           onClose={() => setShowCSVUploader(false)} // cancel / X button
+          existingAssets={assets}
         />
       )}
 
@@ -273,6 +274,7 @@ function App() {
         onClose={closeModal}
         onSave={handleSave}
         error={error}
+        assets={assets}
       />
     </div>
   );

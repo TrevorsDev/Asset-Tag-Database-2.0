@@ -129,6 +129,34 @@
   gap: 1.25rem;
 }
 
+/* BLOCK: Conflict Warning Banner */
+.csv-conflict-banner {
+  background-color: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+}
+
+.csv-conflict-banner__title {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-error-text);
+}
+
+.csv-conflict-banner__list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.csv-conflict-banner__list li {
+  font-size: 0.78rem;
+  color: var(--color-error-text);
+}
+
 .csv-preview-text {
   margin: 0;
   font-size: 0.875rem;
