@@ -26,7 +26,8 @@ const AssetTable = ({
   selectedIds,
   setSelectedIds,
   isSelectionMode,
-  setIsSelectionMode
+  setIsSelectionMode,
+  showToast
 }) => {
 
   // --- 1. DATA & STATE ---
@@ -38,6 +39,7 @@ const AssetTable = ({
       onConfirm: () => {
         deleteAsset(id);
         setConfirmDialog(null);
+        showToast('Asset deleted');
       }
     });
   };

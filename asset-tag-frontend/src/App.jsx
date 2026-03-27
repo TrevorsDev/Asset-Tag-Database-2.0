@@ -17,6 +17,7 @@ import ExportModal from './components/ExportModal.jsx';
 
 import useAssets from './hooks/useAssets.js';
 import BulkDeleteBanner from './components/BulkDeleteBanner.jsx';
+import Toast from './components/Toast.jsx';
 
 function App() {
   // --- 1. GLOAL DATA FROM SUPABASE HOOK ---
@@ -37,6 +38,9 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showCSVUploader, setShowCSVUploader] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
+  const [toast, setToast] = useState(null); // null = hidden, { message, type } = visible
+
+  const showToast = (message, type = 'success') => setToast({ message, type });
 
   // --- 3. TOOLBAR ACTIONS ---
 
@@ -62,11 +66,11 @@ function App() {
   // --- 4. SAVE HANDLER (ADD + EDIT) ---
   const handleSave = async (id, data) => {
     if (id) {
-      // EDIT MODE
       await updateAsset(id, data);
+      showToast('Asset updated successfully');
     } else {
-      // ADD MODE
       await addAsset(data);
+      showToast('Asset added successfully');
     }
 
     closeModal();
@@ -77,6 +81,7 @@ function App() {
   const handleCSVData = async (data) => {
     await bulkUpsertAssets(data);
     setShowCSVUploader(false);
+    showToast(`${data.length} asset${data.length !== 1 ? 's' : ''} imported successfully`);
   };
 
   // EXPORT FILE HANDLER
@@ -159,10 +164,12 @@ function App() {
     setConfirmDialog({
       message: `Permanently delete ${selectedIds.length} selected asset${selectedIds.length !== 1 ? 's' : ''}?`,
       onConfirm: () => {
+        const count = selectedIds.length;
         deleteMultipleAssets(selectedIds);
         setSelectedIds([]);
         setIsSelectionMode(false);
         setConfirmDialog(null);
+        showToast(`${count} asset${count !== 1 ? 's' : ''} deleted`);
       }
     });
   };
@@ -224,7 +231,8 @@ function App() {
         loading={loading}
         deleteAsset={deleteAsset}
         deleteMultipleAssets={deleteMultipleAssets}
-        onEdit={openModalForEdit} // NEW: table tells App when to edit
+        onEdit={openModalForEdit}
+        showToast={showToast}
 
         /* --- SELECTION STATE (for bulk delete) --- */
         selectedIds={selectedIds}
@@ -232,6 +240,15 @@ function App() {
         isSelectionMode={isSelectionMode}
         setIsSelectionMode={setIsSelectionMode}
       />
+
+      {/* --- TOAST NOTIFICATIONS --- */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
 
       {/* --- CONFIRM DIALOG (DELETE) --- */}
       <ConfirmDialog

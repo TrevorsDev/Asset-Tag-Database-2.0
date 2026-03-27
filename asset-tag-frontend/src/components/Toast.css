@@ -1,0 +1,80 @@
+/* BLOCK: toast
+   Fixed floating notification — appears bottom-center, slides up, auto-dismisses.
+   ========================================================================== */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    z-index: 2000;
+
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    padding: 0.75rem 1rem 0.75rem 1.25rem;
+    min-width: 280px;
+    max-width: 460px;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    box-shadow: var(--shadow-modal);
+
+    animation: toastSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes toastSlideUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(1rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* VARIANTS */
+.toast--success {
+    background: var(--color-bg-surface);
+    border-color: var(--color-success-border);
+    color: var(--color-success-text);
+}
+
+.toast--error {
+    background: var(--color-bg-surface);
+    border-color: var(--color-error-border);
+    color: var(--color-error-text);
+}
+
+/* ELEMENTS */
+.toast__icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.toast__message {
+    margin: 0;
+    font-size: 0.875rem;
+    flex: 1;
+    color: var(--color-text-main);
+}
+
+.toast__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.toast__close:hover {
+    color: var(--color-text-main);
+}
