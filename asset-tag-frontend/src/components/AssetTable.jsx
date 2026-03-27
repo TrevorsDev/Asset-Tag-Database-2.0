@@ -114,11 +114,15 @@ const AssetTable = ({
               <td className="asset-table__cell">{asset.asset_tag}</td>
               <td className="asset-table__cell">{asset.serial_number}</td>
               <td className="asset-table__cell">{asset.model}</td>
-              <td className="asset-table__cell">{asset.status}</td>
+              <td className="asset-table__cell">
+                <span className={`status-badge status-badge--${asset.status?.toLowerCase() ?? 'unknown'}`}>
+                  {asset.status?.charAt(0).toUpperCase() + asset.status?.slice(1).toLowerCase()}
+                </span>
+              </td>
               <td className="asset-table__cell">{asset.department}</td>
               <td className="asset-table__cell">{asset.pr}</td>
               <td className="asset-table__cell">{asset.po}</td>
-              <td className="asset-table__cell asset-table__cell--last">
+              <td className="asset-table__cell asset-table__cell--last" title={asset.notes}>
                 <span className="asset-table__cell-text">{asset.notes}</span>
 
                 <div className={"asset-table__actions-container"}>

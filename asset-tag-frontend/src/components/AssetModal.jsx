@@ -134,6 +134,19 @@ const AssetModal = ({ asset, isOpen, onClose, onSave, error }) => {
                                         autoComplete="off"
                                         rows={3}
                                     />
+                                ) : field === 'status' ? (
+                                    <div className={`asset-modal__status-picker${fieldErrors[field] ? ' asset-modal__status-picker--error' : ''}`}>
+                                        {['active', 'inactive', 'retired'].map((option) => (
+                                            <button
+                                                key={option}
+                                                type="button"
+                                                className={`status-pill status-pill--${option}${formData.status === option ? ' status-pill--selected' : ''}`}
+                                                onClick={() => handleChange({ target: { name: 'status', value: option } })}
+                                            >
+                                                {option.charAt(0).toUpperCase() + option.slice(1)}
+                                            </button>
+                                        ))}
+                                    </div>
                                 ) : (
                                     <input
                                         className={`asset-modal__input${fieldErrors[field] ? ' asset-modal__input--error' : ''}`}
@@ -154,7 +167,7 @@ const AssetModal = ({ asset, isOpen, onClose, onSave, error }) => {
 
                     <div className="asset-modal__actions">
                         <button type="submit" className="global-btn primary-btn focus-ring--action">
-                            Save Changes
+                            {asset.id ? 'Save Changes' : 'Add Asset'}
                         </button>
                         <button type="button" className="global-btn secondary-btn focus-ring--action" onClick={onClose}>
                             Cancel

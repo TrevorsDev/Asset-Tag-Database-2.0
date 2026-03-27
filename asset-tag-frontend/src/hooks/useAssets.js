@@ -24,7 +24,7 @@ function useAssets() {
       const { data, error: fetchError } = await supabase
         .from('assets')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('asset_tag', { ascending: true });
 
       if (fetchError) throw fetchError;
 

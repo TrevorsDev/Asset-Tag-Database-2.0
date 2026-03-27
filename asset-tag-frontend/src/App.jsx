@@ -225,6 +225,14 @@ function App() {
         }}
       />
 
+      {/* --- ASSET COUNT --- */}
+      <p className="asset-count">
+        {searchQuery
+          ? `Showing ${filteredAssets.length} of ${assets.length} assets`
+          : `${assets.length} asset${assets.length !== 1 ? 's' : ''}`
+        }
+      </p>
+
       {/* --- ASSET TABLER (ROW-LEVEL ACTIONS) --- */}
       <AssetTable
         assets={filteredAssets}
