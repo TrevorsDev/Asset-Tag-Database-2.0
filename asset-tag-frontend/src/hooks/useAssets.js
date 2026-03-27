@@ -160,20 +160,8 @@ function useAssets() {
       throw upError; // Important: tells CSVUploader the upload failed
     }
 
-    // Update local state so UI updates instantly
-    setAssets(prevAssets => {
-      const incomingMap = new Map(mappedData.map(item => [item.asset_tag, item]));
-
-      // Keep old assets that were NOT overwritten
-      const filteredOldAssets = prevAssets.filter(asset => !incomingMap.has(asset.asset_tag)
-      );
-
-      // New/updated assets first, then old ones
-      return [...mappedData, ...filteredOldAssets];
-    });
-
     setError(null);
-    setLoading(false);
+    await loadData();
   };
 
   // Delete a single asset
