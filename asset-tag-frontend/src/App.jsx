@@ -212,6 +212,7 @@ function App() {
           externalError={error}                     // show errors from useAssets
           clearExternalError={() => setError(null)} // allow CSVUploader to clear them
           onClose={() => setShowCSVUploader(false)} // cancel / X button
+          existingAssets={assets}
         />
       )}
 
@@ -224,6 +225,14 @@ function App() {
           setSelectedIds([]);
         }}
       />
+
+      {/* --- ASSET COUNT --- */}
+      <p className="asset-count">
+        {searchQuery
+          ? `Showing ${filteredAssets.length} of ${assets.length} assets`
+          : `${assets.length} asset${assets.length !== 1 ? 's' : ''}`
+        }
+      </p>
 
       {/* --- ASSET TABLER (ROW-LEVEL ACTIONS) --- */}
       <AssetTable
@@ -265,6 +274,7 @@ function App() {
         onClose={closeModal}
         onSave={handleSave}
         error={error}
+        assets={assets}
       />
     </div>
   );

@@ -47,8 +47,9 @@ const parseCSV = (file) => {
   });
 };
 
-const CSVUploader = ({ onDataParsed, externalError, clearExternalError, onClose }) => {
+const CSVUploader = ({ onDataParsed, externalError, clearExternalError, onClose, existingAssets = [] }) => {
   const [tempData, setTempData] = useState([]);
+  const [conflicts, setConflicts] = useState([]);
   const [localError, setLocalError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
@@ -67,10 +68,24 @@ const CSVUploader = ({ onDataParsed, externalError, clearExternalError, onClose 
 
   const resetState = () => {
     setTempData([]);
+    setConflicts([]);
     setUploadSuccess(false);
     setLastUploadCount(0);
     clearAllErrors();
     if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const checkForConflicts = (parsedRows) => {
+    const found = [];
+    parsedRows.forEach((row, i) => {
+      const serialConflict = existingAssets.find(a =>
+        a.serial_number === row.serial_number && a.asset_tag !== row.asset_tag
+      );
+      if (serialConflict) {
+        found.push(`Row ${i + 1}: Serial ${row.serial_number} is already assigned to ${serialConflict.asset_tag}`);
+      }
+    });
+    setConflicts(found);
   };
 
   const processFile = async (file) => {
@@ -86,6 +101,7 @@ const CSVUploader = ({ onDataParsed, externalError, clearExternalError, onClose 
     try {
       const parsed = await parseCSV(file);
       setTempData(parsed);
+      checkForConflicts(parsed);
     } catch (err) {
       setLocalError(`Error parsing file: ${err.message}`);
     } finally {
@@ -248,6 +264,14 @@ const CSVUploader = ({ onDataParsed, externalError, clearExternalError, onClose 
         {/* STATE 2: PREVIEW */}
         {tempData.length > 0 && !uploadSuccess && (
           <div className="csv-preview-box">
+            {conflicts.length > 0 && (
+              <div className="csv-conflict-banner">
+                <p className="csv-conflict-banner__title">⚠️ {conflicts.length} conflict{conflicts.length !== 1 ? 's' : ''} detected — these rows will fail to upload:</p>
+                <ul className="csv-conflict-banner__list">
+                  {conflicts.map((msg, i) => <li key={i}>{msg}</li>)}
+                </ul>
+              </div>
+            )}
             {renderPreviewTable()}
             <div className="csv-preview-actions">
               <button

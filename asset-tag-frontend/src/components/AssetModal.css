@@ -117,6 +117,71 @@
   border-color: var(--color-status-danger);
 }
 
+/* BLOCK: Status Pill Selector
+   Three clickable pills replacing the native select for status field.
+   Unselected = ghost. Selected = matches badge appearance from AssetTable.
+   ========================================================================== */
+.asset-modal__status-picker {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+}
+
+.asset-modal__status-picker--error .status-pill {
+  outline: 1px solid var(--color-status-danger);
+  border-radius: 999px;
+}
+
+/* BASE: unselected pill — invisible until hovered */
+.status-pill {
+  padding: 0.3rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text-muted);
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+/* HOVER: hint of color before selecting */
+.status-pill--active:hover {
+  border-color: var(--status-active-border);
+  color: var(--status-active-text);
+}
+
+.status-pill--inactive:hover {
+  border-color: var(--status-inactive-border);
+  color: var(--status-inactive-text);
+}
+
+.status-pill--retired:hover {
+  border-color: var(--status-retired-border);
+  color: var(--status-retired-text);
+}
+
+/* SELECTED: matches badge appearance in the table exactly */
+.status-pill--active.status-pill--selected {
+  background-color: var(--status-active-bg);
+  border-color: var(--status-active-border);
+  color: var(--status-active-text);
+}
+
+.status-pill--inactive.status-pill--selected {
+  background-color: var(--status-inactive-bg);
+  border-color: var(--status-inactive-border);
+  color: var(--status-inactive-text);
+}
+
+.status-pill--retired.status-pill--selected {
+  background-color: var(--status-retired-bg);
+  border-color: var(--status-retired-border);
+  color: var(--status-retired-text);
+}
+
 .asset-modal__field-error {
   margin: 0.25rem 0 0 0;
   font-size: 0.75rem;

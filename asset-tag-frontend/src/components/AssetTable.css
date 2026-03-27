@@ -324,6 +324,45 @@ th.checkbox-col {
 }
 
 /* ==========================================================================
+   BLOCK: Status Badge
+   Pill-shaped indicator for asset lifecycle state.
+   Modifiers map to each known status value.
+   ========================================================================== */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: capitalize;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+/* MODIFIER: active — green */
+.status-badge--active {
+    background-color: var(--status-active-bg);
+    border-color: var(--status-active-border);
+    color: var(--status-active-text);
+}
+
+/* MODIFIER: inactive — amber */
+.status-badge--inactive {
+    background-color: var(--status-inactive-bg);
+    border-color: var(--status-inactive-border);
+    color: var(--status-inactive-text);
+}
+
+/* MODIFIER: retired — muted gray */
+.status-badge--retired {
+    background-color: var(--status-retired-bg);
+    border-color: var(--status-retired-border);
+    color: var(--status-retired-text);
+}
+
+/* ==========================================================================
    MISC / UTILITIES
    ========================================================================== */
 

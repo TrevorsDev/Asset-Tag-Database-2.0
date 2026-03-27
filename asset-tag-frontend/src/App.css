@@ -48,6 +48,19 @@
         --color-success-border: rgba(16, 185, 129, 0.5);
         --color-success-text: #bbf7d0;
 
+        /* --- ASSET STATUS BADGE TOKENS --- */
+        --status-active-bg: rgba(16, 185, 129, 0.18);
+        --status-active-border: rgba(16, 185, 129, 0.55);
+        --status-active-text: #34d399;
+
+        --status-inactive-bg: rgba(245, 158, 11, 0.12);
+        --status-inactive-border: rgba(245, 158, 11, 0.4);
+        --status-inactive-text: #fcd34d;
+
+        --status-retired-bg: rgba(148, 163, 184, 0.14);
+        --status-retired-border: rgba(148, 163, 184, 0.35);
+        --status-retired-text: #94a3b8;
+
         /* --- UI HELPERS --- */
         --radius-md: 6px;
         --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.4);
@@ -217,6 +230,14 @@
     font-size: 1.25rem;
     color: var(--color-text-muted);
     margin-top: 0.25rem;
+}
+
+.asset-count {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    text-align: right;
+    margin: 0 0 0.4rem 0;
+    padding-right: 0.25rem;
 }
 
 
